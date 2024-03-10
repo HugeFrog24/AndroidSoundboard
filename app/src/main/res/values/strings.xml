@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Speech Synthesizer</string>
     <string name="play">Play</string>
+    <string name="pause">Pause</string>
 </resources>

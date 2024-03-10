@@ -27,53 +27,53 @@ class MainActivity : AppCompatActivity() {
     private val audioQueue = mutableListOf<AudioIdentifier>()
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var audioQueueFlexbox: FlexboxLayout
+    private lateinit var playButton: MaterialButton
+    private var isAudioPlaying = false // Corrected to 'var' to allow reassignment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         audioQueueFlexbox = findViewById(R.id.audioQueueFlexbox)
+        playButton = findViewById(R.id.playButton)
+        playButton.setOnClickListener {
+            if (isAudioPlaying) {
+                pauseAudio()
+            } else {
+                playAudioQueue()
+            }
+        }
 
         val jsonString = loadJsonFromAssets()
         val audioFiles = parseAudioFilesJson(jsonString)
-
         setupAudioButtons(audioFiles)
-
-        // Change this line to use MaterialButton instead of FloatingActionButton
-        val playButton: MaterialButton = findViewById(R.id.playButton)
-        playButton.setOnClickListener {
-            playAudioQueue()
-        }
-    }
-
-    private fun enqueueAudio(audioIdentifier: AudioIdentifier) {
-        audioQueue.add(audioIdentifier)
-
-        val audioItemLayout = LayoutInflater.from(this).inflate(R.layout.audio_item, audioQueueFlexbox, false)
-        val audioItemView = audioItemLayout.findViewById<TextView>(R.id.audioItemTextView)
-        audioItemView.text = when (audioIdentifier) {
-            is AudioIdentifier.ResourceId -> getAudioItemName(audioIdentifier.id)
-            is AudioIdentifier.AssetFilename -> audioIdentifier.filename
-        }
-
-        val removeAudioItemButton = audioItemLayout.findViewById<MaterialButton>(R.id.removeAudioItemButton)
-        removeAudioItemButton.setOnClickListener {
-            // Remove this view from the FlexboxLayout
-            audioQueueFlexbox.removeView(audioItemLayout)
-            // Remove the corresponding AudioIdentifier from the queue
-            audioQueue.remove(audioIdentifier)
-        }
-
-        audioQueueFlexbox.addView(audioItemLayout)
     }
 
     private fun playAudioQueue() {
-        if (audioQueue.isNotEmpty()) {
-            val audioIdentifier = audioQueue.removeAt(0)
+        if (audioQueue.isNotEmpty() && !isAudioPlaying) {
+            isAudioPlaying = true
+            updatePlayButtonUI()
+            val audioIdentifier = audioQueue.first() // Use first instead of removing to ensure atomicity
             when (audioIdentifier) {
                 is AudioIdentifier.ResourceId -> playAudioResource(audioIdentifier.id)
                 is AudioIdentifier.AssetFilename -> playAudioFromAssets(audioIdentifier.filename)
             }
+        }
+    }
+
+    private fun pauseAudio() {
+        mediaPlayer?.pause()
+        isAudioPlaying = false
+        updatePlayButtonUI()
+    }
+
+    private fun updatePlayButtonUI() {
+        if (isAudioPlaying) {
+            playButton.icon = getDrawable(android.R.drawable.ic_media_pause)
+            playButton.text = getString(R.string.pause)
+        } else {
+            playButton.icon = getDrawable(android.R.drawable.ic_media_play)
+            playButton.text = getString(R.string.play)
         }
     }
 
@@ -82,9 +82,12 @@ class MainActivity : AppCompatActivity() {
 
         mediaPlayer = MediaPlayer.create(this, audioResId).apply {
             setOnCompletionListener {
-                audioQueueFlexbox.removeViewAt(0)
+                audioQueue.removeAt(0) // Remove the played item
+                audioQueueFlexbox.removeViewAt(0) // Remove the view from the screen
+                isAudioPlaying = false
+                updatePlayButtonUI()
                 if (audioQueue.isNotEmpty()) {
-                    playAudioQueue()
+                    playAudioQueue() // Continue playing the next item
                 }
             }
             start()
@@ -149,9 +152,12 @@ class MainActivity : AppCompatActivity() {
                 setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
                 prepare()
                 setOnCompletionListener {
-                    audioQueueFlexbox.removeViewAt(0)
+                    audioQueue.removeAt(0) // Remove the played item
+                    audioQueueFlexbox.removeViewAt(0) // Remove the view from the screen
+                    isAudioPlaying = false
+                    updatePlayButtonUI()
                     if (audioQueue.isNotEmpty()) {
-                        playAudioQueue()
+                        playAudioQueue() // Continue playing the next item
                     }
                 }
                 start()
@@ -159,5 +165,26 @@ class MainActivity : AppCompatActivity() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    private fun enqueueAudio(audioIdentifier: AudioIdentifier) {
+        audioQueue.add(audioIdentifier)
+
+        val audioItemLayout = LayoutInflater.from(this).inflate(R.layout.audio_item, audioQueueFlexbox, false)
+        val audioItemView = audioItemLayout.findViewById<TextView>(R.id.audioItemTextView)
+        audioItemView.text = when (audioIdentifier) {
+            is AudioIdentifier.ResourceId -> getAudioItemName(audioIdentifier.id)
+            is AudioIdentifier.AssetFilename -> audioIdentifier.filename
+        }
+
+        val removeAudioItemButton = audioItemLayout.findViewById<MaterialButton>(R.id.removeAudioItemButton)
+        removeAudioItemButton.setOnClickListener {
+            // Remove this view from the FlexboxLayout
+            audioQueueFlexbox.removeView(audioItemLayout)
+            // Remove the corresponding AudioIdentifier from the queue
+            audioQueue.remove(audioIdentifier)
+        }
+
+        audioQueueFlexbox.addView(audioItemLayout)
     }
 }
