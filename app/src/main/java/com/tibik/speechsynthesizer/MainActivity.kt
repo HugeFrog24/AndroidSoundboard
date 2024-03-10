@@ -56,6 +56,14 @@ class MainActivity : AppCompatActivity() {
             is AudioIdentifier.AssetFilename -> audioIdentifier.filename
         }
 
+        val removeAudioItemButton = audioItemLayout.findViewById<MaterialButton>(R.id.removeAudioItemButton)
+        removeAudioItemButton.setOnClickListener {
+            // Remove this view from the FlexboxLayout
+            audioQueueFlexbox.removeView(audioItemLayout)
+            // Remove the corresponding AudioIdentifier from the queue
+            audioQueue.remove(audioIdentifier)
+        }
+
         audioQueueFlexbox.addView(audioItemLayout)
     }
 

@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:flexWrap="wrap"
-            app:justifyContent="flex_start"
+            app:justifyContent="space_around"
             app:alignItems="flex_start"
             app:alignContent="flex_start">
             <!-- Buttons will be added here programmatically -->

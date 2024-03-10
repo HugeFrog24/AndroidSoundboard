@@ -5,4 +5,5 @@
     android:padding="8dp"
     android:textAppearance="?attr/textAppearanceButton"
     app:cornerRadius="4dp"
-    android:layout_margin="4dp"/>
+    android:layout_margin="4dp"
+    android:textAllCaps="false"/>
