@@ -2,117 +2,140 @@
     {
         "filename": "0.wav",
         "label": "0",
-        "internal": "0"
+        "internal": "0",
+        "cat": "numbers"
     },
     {
         "filename": "1.wav",
         "label": "1",
-        "internal": "1"
+        "internal": "1",
+        "cat": "numbers"
     },
     {
         "filename": "10.wav",
         "label": "10",
-        "internal": "10"
+        "internal": "10",
+        "cat": "numbers"
     },
     {
         "filename": "10_2.wav",
         "label": "10_2",
-        "internal": "10 v2"
+        "internal": "10 v2",
+        "cat": "numbers"
     },
     {
         "filename": "11.wav",
         "label": "11",
-        "internal": "11"
+        "internal": "11",
+        "cat": "numbers"
     },
     {
         "filename": "12.wav",
         "label": "12",
-        "internal": "12"
+        "internal": "12",
+        "cat": "numbers"
     },
     {
         "filename": "2.wav",
         "label": "2",
-        "internal": "2"
+        "internal": "2",
+        "cat": "numbers"
     },
     {
         "filename": "20.wav",
         "label": "20",
-        "internal": "20"
+        "internal": "20",
+        "cat": "numbers"
     },
     {
         "filename": "3.wav",
         "label": "3",
-        "internal": "3"
+        "internal": "3",
+        "cat": "numbers"
     },
     {
         "filename": "30.wav",
         "label": "30",
-        "internal": "30"
+        "internal": "30",
+        "cat": "numbers"
     },
     {
         "filename": "4.wav",
         "label": "4",
-        "internal": "4"
+        "internal": "4",
+        "cat": "numbers"
     },
     {
         "filename": "40.wav",
         "label": "40",
-        "internal": "40"
+        "internal": "40",
+        "cat": "numbers"
     },
     {
         "filename": "5.wav",
         "label": "5",
-        "internal": "5"
+        "internal": "5",
+        "cat": "numbers"
     },
     {
         "filename": "50.wav",
         "label": "50",
-        "internal": "50"
+        "internal": "50",
+        "cat": "numbers"
     },
     {
         "filename": "6.wav",
         "label": "6",
-        "internal": "6"
+        "internal": "6",
+        "cat": "numbers"
     },
     {
         "filename": "60.wav",
         "label": "60",
-        "internal": "60"
+        "internal": "60",
+        "cat": "numbers"
     },
     {
         "filename": "7.wav",
         "label": "7",
-        "internal": "7"
+        "internal": "7",
+        "cat": "numbers"
     },
     {
         "filename": "70.wav",
         "label": "70",
-        "internal": "70"
+        "internal": "70",
+        "cat": "numbers"
     },
     {
         "filename": "8.wav",
         "label": "8",
-        "internal": "8"
+        "internal": "8",
+        "cat": "numbers"
     },
     {
         "filename": "80.wav",
         "label": "80",
-        "internal": "80"
+        "internal": "80",
+        "cat": "numbers"
     },
     {
         "filename": "9.wav",
         "label": "9",
-        "internal": "9"
+        "internal": "9",
+        "cat": "numbers"
     },
     {
         "filename": "90.wav",
         "label": "90",
-        "internal": "90"
+        "internal": "90",
+        "cat": "numbers"
     },
     {
         "filename": "abbiegen.wav",
         "label": "abbiegen",
-        "internal": "abbiegen"
+        "internal": "abbiegen",
+        "cat": "directions"
     },
     {
         "filename": "Abfahrt.wav",
@@ -121,12 +144,13 @@
     },
     {
         "filename": "AchtUnd.wav",
-        "label": "AchtUnd",
-        "internal": "Achtund"
+        "label": "Acht und",
+        "internal": "Achtund",
+        "cat": "numbers"
     },
     {
         "filename": "ACrazyFrogDay.wav",
-        "label": "ACrazyFrogDay",
+        "label": "A Crazy Frog Day",
         "internal": "Acrazyfrogday"
     },
     {
@@ -477,22 +501,26 @@
     {
         "filename": "Meter.wav",
         "label": "Meter",
-        "internal": "Meter"
+        "internal": "Meter",
+        "cat": "units"
     },
     {
         "filename": "Metern.wav",
         "label": "Metern",
-        "internal": "Metern"
+        "internal": "Metern",
+        "cat": "units"
     },
     {
         "filename": "Minute.wav",
         "label": "Minute",
-        "internal": "Minute"
+        "internal": "Minute",
+        "cat": "units"
     },
     {
         "filename": "Minuten.wav",
         "label": "Minuten",
-        "internal": "Minuten"
+        "internal": "Minuten",
+        "cat": "units"
     },
     {
         "filename": "MitDerHauptrolleVon.wav",
@@ -502,7 +530,8 @@
     {
         "filename": "Mitte.wav",
         "label": "Mitte",
-        "internal": "Mitte"
+        "internal": "Mitte",
+        "cat": "directions"
     },
     {
         "filename": "MoinMoin.wav",
@@ -517,12 +546,14 @@
     {
         "filename": "Monat.wav",
         "label": "Monat",
-        "internal": "Monat"
+        "internal": "Monat",
+        "cat": "units"
     },
     {
         "filename": "Monate.wav",
         "label": "Monate",
-        "internal": "Monate"
+        "internal": "Monate",
+        "cat": "units"
     },
     {
         "filename": "Muenchen.wav",
@@ -541,8 +572,9 @@
     },
     {
         "filename": "NeunUnd.wav",
-        "label": "NeunUnd",
-        "internal": "Neunund"
+        "label": "Neun und",
+        "internal": "Neunund",
+        "cat": "numbers"
     },
     {
         "filename": "Neustadt.wav",
@@ -621,18 +653,20 @@
     },
     {
         "filename": "SechsUnd.wav",
-        "label": "SechsUnd",
+        "label": "Sechs und",
         "internal": "Sechsund"
     },
     {
         "filename": "Sekunde.wav",
         "label": "Sekunde",
-        "internal": "Sekunde"
+        "internal": "Sekunde",
+        "cat": "units"
     },
     {
         "filename": "Sekunden.wav",
         "label": "Sekunden",
-        "internal": "Sekunden"
+        "internal": "Sekunden",
+        "cat": "units"
     },
     {
         "filename": "Sicherheitshinweis.wav",
@@ -641,7 +675,7 @@
     },
     {
         "filename": "SiebenUnd.wav",
-        "label": "SiebenUnd",
+        "label": "Sieben und",
         "internal": "Siebenund"
     },
     {
@@ -677,12 +711,14 @@
     {
         "filename": "Stunde.wav",
         "label": "Stunde",
-        "internal": "Stunde"
+        "internal": "Stunde",
+        "cat": "units"
     },
     {
         "filename": "Stunden.wav",
         "label": "Stunden",
-        "internal": "Stunden"
+        "internal": "Stunden",
+        "cat": "units"
     },
     {
         "filename": "Suedstadt.wav",
@@ -692,12 +728,14 @@
     {
         "filename": "Tag.wav",
         "label": "Tag",
-        "internal": "Tag"
+        "internal": "Tag",
+        "cat": "units"
     },
     {
         "filename": "Tage.wav",
         "label": "Tage",
-        "internal": "Tage"
+        "internal": "Tage",
+        "cat": "units"
     },
     {
         "filename": "Tausend.wav",
@@ -737,7 +775,8 @@
     {
         "filename": "Uhr.wav",
         "label": "Uhr",
-        "internal": "Uhr"
+        "internal": "Uhr",
+        "cat": "units"
     },
     {
         "filename": "Uhrzeit.wav",
@@ -836,7 +875,8 @@
     },
     {
         "filename": "ZweiUnd.wav",
-        "label": "ZweiUnd",
-        "internal": "Zweiund"
+        "label": "Zwei und",
+        "internal": "Zweiund",
+        "cat": "numbers"
     }
 ]
