@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Sprachsynthesizer</string>
+    <string name="play">Abspielen</string>
+    <string name="pause">Pause</string>
+    <string name="drag_handle_description">Audioelement verschieben</string>
+    <string name="remove_audio_item_description">Audioelement entfernen</string>
+</resources>

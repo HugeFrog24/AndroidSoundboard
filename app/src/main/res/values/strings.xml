@@ -2,4 +2,6 @@
     <string name="app_name">Speech Synthesizer</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
+    <string name="drag_handle_description">Move audio item</string>
+    <string name="remove_audio_item_description">Remove audio item</string>
 </resources>
