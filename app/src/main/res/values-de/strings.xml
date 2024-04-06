@@ -4,4 +4,12 @@
     <string name="pause">Pause</string>
     <string name="drag_handle_description">Audioelement verschieben</string>
     <string name="remove_audio_item_description">Audioelement entfernen</string>
+    <string name="clear">Leeren</string>
+    <string name="category_numbers">Zahlen</string>
+    <string name="category_stations">Haltestellen</string>
+    <string name="category_directions">Wegweisungen</string>
+    <string name="category_greetings">Begrüßungen</string>
+    <string name="category_units">Einheiten</string>
+    <string name="category_trains">Züge</string>
+    <string name="category_names">Namen</string>
 </resources>

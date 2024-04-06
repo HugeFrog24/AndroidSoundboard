@@ -1,22 +1,9 @@
 [
-    {
-      "id": "numbers",
-      "name": "Numbers"
-    },
-    {
-      "id": "directions",
-      "name": "Directions"
-    },
-    {
-      "id": "greetings",
-      "name": "Greetings"
-    },
-    {
-        "id": "units",
-        "name": "Units"
-    },
-    {
-        "id": "names",
-        "name": "Names"
-    }
-  ]
+  { "id": "numbers" },
+  { "id": "stations" },
+  { "id": "directions" },
+  { "id": "greetings" },
+  { "id": "units" },
+  { "id": "trains" },
+  { "id": "names" }
+]

@@ -161,22 +161,26 @@
     {
         "filename": "AlleeCenter.wav",
         "label": "Allee-Center",
-        "internal": "Alleecenter"
+        "internal": "Alleecenter",
+        "cat": "stations"
     },
     {
         "filename": "AmBruchsee.wav",
         "label": "Am Bruchsee",
-        "internal": "Ambruchsee"
+        "internal": "Ambruchsee",
+        "cat": "stations"
     },
     {
         "filename": "AmNeustadtCenter.wav",
         "label": "Am Neustadt-Center",
-        "internal": "Amneustadtcenter"
+        "internal": "Amneustadtcenter",
+        "cat": "stations"
     },
     {
         "filename": "AnDerMagistrale.wav",
         "label": "An der Magistrale",
-        "internal": "Andermagistrale"
+        "internal": "Andermagistrale",
+        "cat": "stations"
     },
     {
         "filename": "Ankunft.wav",
@@ -196,7 +200,8 @@
     {
         "filename": "BadLausick.wav",
         "label": "Bad Lausick",
-        "internal": "Badlausick"
+        "internal": "Badlausick",
+        "cat": "stations"
     },
     {
         "filename": "Berichtigung.wav",
@@ -206,7 +211,8 @@
     {
         "filename": "Berlin.wav",
         "label": "Berlin",
-        "internal": "Berlin"
+        "internal": "Berlin",
+        "cat": "stations"
     },
     {
         "filename": "BitteAlleAussteigen.wav",
@@ -246,12 +252,14 @@
     {
         "filename": "Bremen.wav",
         "label": "Bremen",
-        "internal": "Bremen"
+        "internal": "Bremen",
+        "cat": "Stations"
     },
     {
         "filename": "ChemnitzHbf.wav",
         "label": "Chemnitz Hbf",
-        "internal": "Chemnitzhbf"
+        "internal": "Chemnitzhbf",
+        "cat": "Stations"
     },
     {
         "filename": "DasRauchenAmBahnhof.wav",
@@ -261,7 +269,8 @@
     {
         "filename": "DessauerBruecke.wav",
         "label": "Dessauer Brücke",
-        "internal": "Dessauerbruecke"
+        "internal": "Dessauerbruecke",
+        "cat": "Stations"
     },
     {
         "filename": "DieseReiseEndetHier.wav",
@@ -281,12 +290,14 @@
     {
         "filename": "DreiUnd.wav",
         "label": "DreiUnd",
-        "internal": "Dreiund"
+        "internal": "Dreiund",
+        "cat": "numbers"
     },
     {
         "filename": "ein.wav",
         "label": "ein",
-        "internal": "Ein"
+        "internal": "Ein",
+        "cat": "numbers"
     },
     {
         "filename": "Einfahrt.wav",
@@ -306,7 +317,8 @@
     {
         "filename": "Einund.wav",
         "label": "Einund",
-        "internal": "Einund"
+        "internal": "Einund",
+        "cat": "numbers"
     },
     {
         "filename": "EsBleibtHierAllesSoWieEsIst.wav",
@@ -346,22 +358,26 @@
     {
         "filename": "Halle-Hbf.wav",
         "label": "Halle Hbf",
-        "internal": "Halle-Hbf"
+        "internal": "Halle-Hbf",
+        "cat": "stations"
     },
     {
         "filename": "Halle-Messe.wav",
         "label": "Halle-Messe",
-        "internal": "Halle-Messe"
+        "internal": "Halle-Messe",
+        "cat": "stations"
     },
     {
         "filename": "HalleNietleben.wav",
         "label": "Halle-Nietleben",
-        "internal": "Hallenietleben"
+        "internal": "Hallenietleben",
+        "cat": "stations"
     },
     {
         "filename": "Hamburg.wav",
         "label": "Hamburg",
-        "internal": "Hamburg"
+        "internal": "Hamburg",
+        "cat": "stations"
     },
     {
         "filename": "HeuteCa.wav",
@@ -371,17 +387,20 @@
     {
         "filename": "Hundert.wav",
         "label": "Hundert",
-        "internal": "Hundert"
+        "internal": "Hundert",
+        "cat": "numbers"
     },
     {
         "filename": "IC.wav",
         "label": "IC",
-        "internal": "Ic"
+        "internal": "Ic",
+        "cat": "trains"
     },
     {
         "filename": "ICE.wav",
         "label": "ICE",
-        "internal": "Ice"
+        "internal": "Ice",
+        "cat": "trains"
     },
     {
         "filename": "IhreNaechstenAnschluesse.wav",
@@ -416,12 +435,14 @@
     {
         "filename": "Jahr.wav",
         "label": "Jahr",
-        "internal": "Jahr"
+        "internal": "Jahr",
+        "cat": "units"
     },
     {
         "filename": "Jahre.wav",
         "label": "Jahre",
-        "internal": "Jahre"
+        "internal": "Jahre",
+        "cat": "units"
     },
     {
         "filename": "jeweils.wav",
@@ -431,12 +452,14 @@
     {
         "filename": "Kilometer.wav",
         "label": "Kilometer",
-        "internal": "Kilometer"
+        "internal": "Kilometer",
+        "cat": "units"
     },
     {
         "filename": "Kilometern.wav",
         "label": "Kilometern",
-        "internal": "Kilometern"
+        "internal": "Kilometern",
+        "cat": "units"
     },
     {
         "filename": "kurz.wav",
@@ -466,32 +489,38 @@
     {
         "filename": "LeipzigerStrasse.wav",
         "label": "Leipziger Straße",
-        "internal": "Leipzigerstrasse"
+        "internal": "Leipzigerstrasse",
+        "cat": "stations"
     },
     {
         "filename": "LeipzigerStrasse_2.wav",
         "label": "Leipziger Straße v2",
-        "internal": "Leipzigerstrasse2"
+        "internal": "Leipzigerstrasse2",
+        "cat": "stations"
     },
     {
         "filename": "LeipzigHalleFlughafen.wav",
         "label": "Leipzig/Halle Flughafen",
-        "internal": "Leipzighalleflughafen"
+        "internal": "Leipzighalleflughafen",
+        "cat": "stations"
     },
     {
         "filename": "LeipzigHbf.wav",
         "label": "Leipzig Hbf",
-        "internal": "Leipzighbf"
+        "internal": "Leipzighbf",
+        "cat": "stations"
     },
     {
         "filename": "LimbachOberfrohna.wav",
         "label": "Limbach-Oberfrohna",
-        "internal": "Limbachoberfrohna"
+        "internal": "Limbachoberfrohna",
+        "cat": "stations"
     },
     {
         "filename": "Links.wav",
         "label": "Links",
-        "internal": "Links"
+        "internal": "Links",
+        "cat": "directions"
     },
     {
         "filename": "Messe.wav",
@@ -536,12 +565,14 @@
     {
         "filename": "MoinMoin.wav",
         "label": "MoinMoin",
-        "internal": "Moinmoin"
+        "internal": "Moinmoin",
+        "cat": "greetings"
     },
     {
         "filename": "Moment.wav",
         "label": "Moment",
-        "internal": "Moment"
+        "internal": "Moment",
+        "cat": "units"
     },
     {
         "filename": "Monat.wav",
@@ -558,7 +589,8 @@
     {
         "filename": "Muenchen.wav",
         "label": "München",
-        "internal": "Muenchen"
+        "internal": "Muenchen",
+        "cat": "stations"
     },
     {
         "filename": "nach.wav",
@@ -568,7 +600,8 @@
     {
         "filename": "Narsdorf.wav",
         "label": "Narsdorf",
-        "internal": "Narsdorf"
+        "internal": "Narsdorf",
+        "cat": "stations"
     },
     {
         "filename": "NeunUnd.wav",
@@ -579,22 +612,26 @@
     {
         "filename": "Neustadt.wav",
         "label": "Neustadt",
-        "internal": "Neustadt"
+        "internal": "Neustadt",
+        "cat": "stations"
     },
     {
         "filename": "NeustadtCentrum.wav",
         "label": "Neustadt-Centrum",
-        "internal": "Neustadtcentrum"
+        "internal": "Neustadtcentrum",
+        "cat": "stations"
     },
     {
         "filename": "Nietleben.wav",
         "label": "Nietleben",
-        "internal": "Nietleben"
+        "internal": "Nietleben",
+        "cat": "stations"
     },
     {
         "filename": "Nini.wav",
         "label": "Nini",
-        "internal": "Nini"
+        "internal": "Nini",
+        "cat": "names"
     },
     {
         "filename": "oder.wav",
@@ -609,17 +646,20 @@
     {
         "filename": "RB.wav",
         "label": "RB",
-        "internal": "Rb"
+        "internal": "Rb",
+        "cat": "trains"
     },
     {
         "filename": "RE.wav",
         "label": "RE",
-        "internal": "Re"
+        "internal": "Re",
+        "cat": "trains"
     },
     {
         "filename": "Rechts.wav",
         "label": "Rechts",
-        "internal": "Rechts"
+        "internal": "Rechts",
+        "cat": "directions"
     },
     {
         "filename": "RestlicheKraeuterGrobAbzupfen.wav",
@@ -629,17 +669,20 @@
     {
         "filename": "Richtung.wav",
         "label": "Richtung",
-        "internal": "Richtung"
+        "internal": "Richtung",
+        "cat": "directions"
     },
     {
         "filename": "Rosengarten.wav",
         "label": "Rosengarten",
-        "internal": "Rosengarten"
+        "internal": "Rosengarten",
+        "cat": "stations"
     },
     {
         "filename": "S.wav",
         "label": "S",
-        "internal": "S"
+        "internal": "S",
+        "cat": "trains"
     },
     {
         "filename": "SBahnhof.wav",
@@ -654,7 +697,8 @@
     {
         "filename": "SechsUnd.wav",
         "label": "Sechs und",
-        "internal": "Sechsund"
+        "internal": "Sechsund",
+        "cat": "numbers"
     },
     {
         "filename": "Sekunde.wav",
@@ -676,7 +720,8 @@
     {
         "filename": "SiebenUnd.wav",
         "label": "Sieben und",
-        "internal": "Siebenund"
+        "internal": "Siebenund",
+        "cat": "numbers"
     },
     {
         "filename": "SieHabenIhrenZielortErreicht.wav",
@@ -686,7 +731,8 @@
     {
         "filename": "Silberhoehe.wav",
         "label": "Silberhöhe",
-        "internal": "Silberhoehe"
+        "internal": "Silberhoehe",
+        "cat": "stations"
     },
     {
         "filename": "sind.wav",
@@ -740,12 +786,14 @@
     {
         "filename": "Tausend.wav",
         "label": "Tausend",
-        "internal": "Tausend"
+        "internal": "Tausend",
+        "cat": "numbers"
     },
     {
         "filename": "Tibik.wav",
         "label": "Tibik",
-        "internal": "Tibik"
+        "internal": "Tibik",
+        "cat": "names"
     },
     {
         "filename": "TibikUndNini.wav",
@@ -796,7 +844,8 @@
     {
         "filename": "VierUnd.wav",
         "label": "VierUnd",
-        "internal": "Vierund"
+        "internal": "Vierund",
+        "cat": "numbers"
     },
     {
         "filename": "VorsichtBeiDerEinfahrt.wav",
@@ -846,12 +895,14 @@
     {
         "filename": "Woche.wav",
         "label": "Woche",
-        "internal": "Woche"
+        "internal": "Woche",
+        "cat": "units"
     },
     {
         "filename": "Wochen.wav",
         "label": "Wochen",
-        "internal": "Wochen"
+        "internal": "Wochen",
+        "cat": "units"
     },
     {
         "filename": "WohnstadtNord.wav",
@@ -861,7 +912,8 @@
     {
         "filename": "ZscherbenerStrasse.wav",
         "label": "Zscherbener Straße",
-        "internal": "Zscherbenerstrasse"
+        "internal": "Zscherbenerstrasse",
+        "cat": "stations"
     },
     {
         "filename": "zu.wav",

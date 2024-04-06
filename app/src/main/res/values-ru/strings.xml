@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Синтезатор речи</string>
+    <string name="play">Восроизвести</string>
+    <string name="pause">Пауза</string>
+    <string name="drag_handle_description">Переместить аудиоэлемент</string>
+    <string name="remove_audio_item_description">Удалить аудиоэлемент</string>
+    <string name="clear">Очистить</string>
+    <string name="category_numbers">Числа</string>
+    <string name="category_stations">Остановки</string>
+    <string name="category_directions">Направления</string>
+    <string name="category_greetings">Приветствия</string>
+    <string name="category_units">Единицы</string>
+    <string name="category_trains">Поезда</string>
+    <string name="category_names">Имена</string>
+</resources>

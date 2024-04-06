@@ -1,7 +1,9 @@
 package com.tibik.speechsynthesizer
 
+import AudioIdentifierDeserializer
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.DragEvent
 import android.view.Gravity
@@ -14,23 +16,34 @@ import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.DynamicColors
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
+import com.tibik.speechsynthesizer.audioqueue.AudioQueueManager
 import com.tibik.speechsynthesizer.lib.audio.AudioFile
 import com.tibik.speechsynthesizer.lib.audio.AudioFileParser
 import com.tibik.speechsynthesizer.lib.audio.AudioIdentifier
 import com.tibik.speechsynthesizer.lib.audio.MediaPlayerCallback
 import com.tibik.speechsynthesizer.lib.audio.MediaPlayerWrapper
 import com.tibik.speechsynthesizer.lib.audio.MediaPlayerWrapperImpl
+import com.tibik.speechsynthesizer.ui.AudioUIManager
 import java.io.IOException
-import java.util.Collections
 
 class MainActivity : AppCompatActivity(), MediaPlayerCallback {
     private lateinit var mediaPlayerWrapper: MediaPlayerWrapper
-    private val audioQueue = mutableListOf<AudioIdentifier>()
+    private lateinit var audioQueueManager: AudioQueueManager
+    private lateinit var audioUIManager: AudioUIManager
     private var isAudioPlaying = false
+    private var currentIndex = 0
     private lateinit var audioQueueFlexbox: FlexboxLayout
     private lateinit var buttonContainerFlexbox: FlexboxLayout
     private lateinit var playButton: MaterialButton
     private lateinit var categories: List<Category>
+    private lateinit var clearQueueButton: MaterialButton
+
+    // Initialize the Gson instance with the custom deserializer
+    private val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(AudioIdentifier::class.java, AudioIdentifierDeserializer())
+        .create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,13 +55,55 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         audioQueueFlexbox = findViewById(R.id.audioQueueFlexbox)
         buttonContainerFlexbox = findViewById(R.id.buttonContainer)
         playButton = findViewById<MaterialButton>(R.id.playButton).apply {
+            text = context.getString(R.string.play).uppercase() // Capitalize the text immediately
             setOnClickListener {
                 togglePlayback()
             }
         }
+        clearQueueButton = findViewById<MaterialButton>(R.id.clearQueueButton).apply {
+            text = context.getString(R.string.clear).uppercase()
+            setOnClickListener {
+                clearAudioQueue()
+            }
+        }
+
+        audioQueueManager = AudioQueueManager()
+        audioUIManager = AudioUIManager(this, audioQueueFlexbox)
+
+        // Now that playButton is initialized, you can safely call updatePlayButtonState
+        updatePlayButtonState()
+
         updateDynamicColors()
         loadAudioFiles()
+        savedInstanceState?.let {
+        val audioQueueJson = it.getString("audioQueue")
+        if (audioQueueJson != null) {
+                val type = object : TypeToken<List<AudioIdentifier>>() {}.type
+                val audioQueueList: List<AudioIdentifier> = gson.fromJson(audioQueueJson, type)
+                audioQueueManager.clearAudioQueue()
+                audioQueueManager.addAllAudios(audioQueueList)
+            }
+        }
+        audioUIManager.updateAudioQueueUI(audioQueueManager.getAudioQueue())
         setupDragAndDrop()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Convert your audio queue to a JSON string or another suitable format
+        val audioQueueJson = gson.toJson(audioQueueManager.getAudioQueue())
+        // Save the JSON string to the outState Bundle
+        outState.putString("audioQueue", audioQueueJson)
+    }
+
+    private fun clearAudioQueue() {
+        audioQueueManager.clearAudioQueue() // Clear the audio queue list
+        audioUIManager.updateAudioQueueUI(audioQueueManager.getAudioQueue()) // Update the UI to reflect the changes
+        if (isAudioPlaying) {
+            mediaPlayerWrapper.pause() // Pause any currently playing audio
+            isAudioPlaying = false
+            updatePlayButtonState()
+        }
     }
 
     private fun setupDragAndDrop() {
@@ -65,7 +120,8 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
                     val item = dragEvent.localState as View
                     val fromIndex = audioQueueFlexbox.indexOfChild(item)
                     val toIndex = calculateTargetIndex(dragEvent.x, dragEvent.y)
-                    reorderAudioQueue(fromIndex, toIndex)
+                    audioQueueManager.reorderAudioQueue(fromIndex, toIndex)
+                    audioUIManager.updateAudioQueueUI(audioQueueManager.getAudioQueue())
                     true
                 }
                 DragEvent.ACTION_DRAG_EXITED -> {
@@ -93,39 +149,6 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         return audioQueueFlexbox.childCount - 1
     }
 
-    private fun reorderAudioQueue(fromIndex: Int, toIndex: Int) {
-        if (fromIndex < toIndex) {
-            for (i in fromIndex until toIndex) {
-                Collections.swap(audioQueue, i, i + 1)
-            }
-        } else {
-            for (i in fromIndex downTo toIndex + 1) {
-                Collections.swap(audioQueue, i, i - 1)
-            }
-        }
-        // Update the UI to reflect the new order
-        updateAudioQueueUI()
-    }
-
-    private fun updateAudioQueueUI() {
-        audioQueueFlexbox.removeAllViews()
-        audioQueue.forEach { audioIdentifier ->
-            val layout = LayoutInflater.from(this).inflate(R.layout.audio_item, audioQueueFlexbox, false)
-            val audioItemView = layout.findViewById<TextView>(R.id.audioItemTextView)
-            audioItemView.text = getAudioItemName(audioIdentifier)
-            layout.findViewById<MaterialButton>(R.id.removeAudioItemButton).setOnClickListener {
-                audioQueueFlexbox.removeView(layout)
-                audioQueue.remove(audioIdentifier)
-            }
-            layout.setOnLongClickListener { view ->
-                val dragShadowBuilder = View.DragShadowBuilder(view)
-                view.startDragAndDrop(null, dragShadowBuilder, view, 0)
-                true
-            }
-            audioQueueFlexbox.addView(layout)
-        }
-    }
-
     private fun updateDynamicColors() {
         val typedValue = TypedValue()
         val theme = theme
@@ -140,8 +163,21 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         playButton.setTextColor(onPrimaryColor)
     }
 
+    private fun updatePlayButtonState() {
+        val (textResId, iconResId) = if (isAudioPlaying) {
+            Pair(R.string.pause, android.R.drawable.ic_media_pause)
+        } else {
+            Pair(R.string.play, android.R.drawable.ic_media_play)
+        }
+
+        runOnUiThread {
+            playButton.text = getString(textResId).uppercase()
+            playButton.icon = AppCompatResources.getDrawable(this, iconResId)
+        }
+    }
+
     private fun togglePlayback() {
-        if (audioQueue.isNotEmpty()) {
+        if (audioQueueManager.getAudioQueue().isNotEmpty()) {
             isAudioPlaying = !isAudioPlaying
             if (isAudioPlaying) {
                 playAudioQueue()
@@ -151,31 +187,18 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         } else {
             isAudioPlaying = false
         }
-        updatePlayButtonUI()
+        updatePlayButtonState()
     }
 
     private fun playAudioQueue() {
-        if (audioQueue.isNotEmpty() && isAudioPlaying) {
-            when (val audioIdentifier = audioQueue.first()) {
-                is AudioIdentifier.ResourceId -> mediaPlayerWrapper.playAudioResource(
-                    audioIdentifier.id
-                )
+        val audioQueue = audioQueueManager.getAudioQueue()
+        if (audioQueue.isNotEmpty() && isAudioPlaying && currentIndex >= 0 && currentIndex < audioQueue.size) {
+            val audioIdentifier = audioQueue[currentIndex]
 
-                is AudioIdentifier.AssetFilename -> mediaPlayerWrapper.playAudioFromAssets(
-                    audioIdentifier.filename
-                )
+            when (audioIdentifier) {
+                is AudioIdentifier.ResourceId -> mediaPlayerWrapper.playAudioResource(audioIdentifier.id)
+                is AudioIdentifier.AssetFilename -> mediaPlayerWrapper.playAudioFromAssets(audioIdentifier.filename)
             }
-        }
-    }
-
-    private fun updatePlayButtonUI() {
-        runOnUiThread {
-            playButton.icon = if (isAudioPlaying) AppCompatResources.getDrawable(
-                this,
-                android.R.drawable.ic_media_pause
-            ) else AppCompatResources.getDrawable(this, android.R.drawable.ic_media_play)
-            playButton.text =
-                if (isAudioPlaying) getString(R.string.pause) else getString(R.string.play)
         }
     }
 
@@ -200,7 +223,15 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
 
     private fun loadCategories() {
         val jsonString = loadJsonFromAssets("categories.json")
-        categories = Gson().fromJson(jsonString, Array<Category>::class.java).toList()
+        val type = object : TypeToken<List<Category>>() {}.type
+        val tempCategories: List<Category> = Gson().fromJson(jsonString, type)
+        categories = tempCategories.map { category ->
+            Log.d("LoadCategories", "Package Name: $packageName")
+            val resId = resources.getIdentifier("category_${category.id}", "string", packageName)
+            Log.d("LoadCategories", "Category: ${category.id}, ResId: $resId")
+            category.name = if (resId != 0) getString(resId) else category.id
+            category
+        }
     }
 
     private fun setupAudioButtons(audioFiles: List<AudioFile>) {
@@ -247,21 +278,8 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
     }
 
     private fun enqueueAudio(audioIdentifier: AudioIdentifier) {
-        audioQueue.add(audioIdentifier)
-        LayoutInflater.from(this).inflate(R.layout.audio_item, audioQueueFlexbox, false).also { layout ->
-            val audioItemView = layout.findViewById<TextView>(R.id.audioItemTextView)
-            audioItemView.text = getAudioItemName(audioIdentifier)
-            layout.findViewById<MaterialButton>(R.id.removeAudioItemButton).setOnClickListener {
-                audioQueueFlexbox.removeView(layout)
-                audioQueue.remove(audioIdentifier)
-            }
-            layout.setOnLongClickListener { view ->
-                val dragShadowBuilder = View.DragShadowBuilder(view)
-                view.startDragAndDrop(null, dragShadowBuilder, view, 0)
-                true
-            }
-            audioQueueFlexbox.addView(layout)
-        }
+        audioQueueManager.addAudio(audioIdentifier)
+        audioUIManager.updateAudioQueueUI(audioQueueManager.getAudioQueue())
     }
 
     private fun getAudioItemName(audioIdentifier: AudioIdentifier): String =
@@ -271,16 +289,19 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         }
 
     override fun onAudioComplete() {
-        audioQueue.removeAt(0) // Remove the played item
         runOnUiThread {
-            if (audioQueueFlexbox.childCount > 0) {
-                audioQueueFlexbox.removeViewAt(0) // Ensure there's a view to remove
-            }
-            if (audioQueue.isEmpty()) {
-                isAudioPlaying = false
-                updatePlayButtonUI()
+            // Move to the next item or reset if at the end of the queue
+            if (currentIndex + 1 < audioQueueManager.getAudioQueue().size) {
+                currentIndex++ // Move to the next item
+                playAudioQueue() // Start playing the next item
             } else {
-                playAudioQueue()
+                // Reset the playhead to the start of the queue
+                currentIndex = 0 // Reset index
+                isAudioPlaying = false
+                updatePlayButtonState()
+                // Optionally, if you want to automatically start playing from the beginning, uncomment the following lines:
+                // isAudioPlaying = true
+                // playAudioQueue()
             }
         }
     }

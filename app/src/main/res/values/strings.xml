@@ -4,4 +4,12 @@
     <string name="pause">Pause</string>
     <string name="drag_handle_description">Move audio item</string>
     <string name="remove_audio_item_description">Remove audio item</string>
+    <string name="clear">Clear</string>
+    <string name="category_numbers">Numbers</string>
+    <string name="category_stations">Stations</string>
+    <string name="category_directions">Directions</string>
+    <string name="category_greetings">Greetings</string>
+    <string name="category_units">Units</string>
+    <string name="category_trains">Trains</string>
+    <string name="category_names">Names</string>
 </resources>
