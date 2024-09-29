@@ -10,9 +10,9 @@ android {
     defaultConfig {
         applicationId = "com.tibik.speechsynthesizer"
         minSdk = 28
-        targetSdk = 34
-        versionCode = 7
-        versionName = "1.3.2"
+        targetSdk = 35
+        versionCode = 8
+        versionName = "1.3.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
