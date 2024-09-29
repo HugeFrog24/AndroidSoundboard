@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="1.3.2">
-        <change>Added new feature X</change>
-        <change>Fixed bug Y</change>
-        <change>Improved performance of Z</change>
-    </release>
-    <release version="1.3.1">
-        <change>Previous version changes...</change>
+    <release version="1.3.3">
+        <change>🛠️ Implemented drag-and-drop for audio queue items</change>
+        <change>🆕 Added "What's New" dialog to show changelog</change>
+        <change>⚡ Improved performance and minor UI tweaks</change>
+        <change>🌐 Updated translations</change>
     </release>
 </changelog>

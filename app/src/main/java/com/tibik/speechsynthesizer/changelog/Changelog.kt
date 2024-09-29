@@ -89,15 +89,31 @@ fun ChangelogDialog(
         },
         text = {
             Column {
+                // **Group changelog items by version**
+                val groupedItems = changelogItems.groupBy { it.version }
+
                 LazyColumn {
-                    items(changelogItems) { item ->
-                        Text(
-                            text = "${item.version}: ${item.change}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
+                    // **Iterate over each version group**
+                    groupedItems.forEach { (version, items) ->
+                        // **Display the version only once**
+                        item {
+                            Text(
+                                text = version,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+                        // **Display the list of changes under the version**
+                        items(items) { item ->
+                            Text(
+                                text = "• ${item.change}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(start = 16.dp, bottom = 4.dp)
+                            )
+                        }
                     }
                 }
+                // **Existing checkbox and text**
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
