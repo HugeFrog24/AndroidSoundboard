@@ -32,7 +32,7 @@ import com.google.android.material.color.DynamicColors
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.tibik.speechsynthesizer.audioqueue.AudioQueueManager
+import com.tibik.speechsynthesizer.lib.audio.AudioQueueManager
 import com.tibik.speechsynthesizer.changelog.ChangelogDialog
 import com.tibik.speechsynthesizer.changelog.ChangelogItem
 import com.tibik.speechsynthesizer.changelog.ChangelogManager

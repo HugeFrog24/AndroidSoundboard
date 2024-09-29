@@ -1,6 +1,5 @@
-package com.tibik.speechsynthesizer.audioqueue
+package com.tibik.speechsynthesizer.lib.audio
 
-import com.tibik.speechsynthesizer.lib.audio.AudioIdentifier
 import java.util.Collections
 
 class AudioQueueManager {
