@@ -1,15 +1,19 @@
 package com.tibik.speechsynthesizer
 
 import AudioIdentifierDeserializer
+import android.content.Context
 import android.graphics.Color
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.util.TypedValue
 import android.view.DragEvent
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import com.google.android.flexbox.FlexboxLayout
@@ -26,6 +30,7 @@ import com.tibik.speechsynthesizer.lib.audio.MediaPlayerCallback
 import com.tibik.speechsynthesizer.lib.audio.MediaPlayerWrapper
 import com.tibik.speechsynthesizer.lib.audio.MediaPlayerWrapperImpl
 import com.tibik.speechsynthesizer.ui.AudioUIManager
+import java.io.File
 import java.io.IOException
 
 class MainActivity : AppCompatActivity(), MediaPlayerCallback {
@@ -39,6 +44,8 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
     private lateinit var playButton: MaterialButton
     private lateinit var categories: List<Category>
     private lateinit var clearQueueButton: MaterialButton
+    private lateinit var addCustomSoundButton: MaterialButton
+    private val customSounds = mutableListOf<AudioFile>()
 
     // Define the mapping from category IDs to resource IDs
     private val categoryIdToResId = mapOf(
@@ -48,14 +55,41 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         "greetings" to R.string.category_greetings,
         "units" to R.string.category_units,
         "trains" to R.string.category_trains,
-        "names" to R.string.category_names
-        // Add other categories as needed
+        "names" to R.string.category_names,
+        "other" to R.string.category_other,
+        "custom" to R.string.category_custom  // Add this line
     )
 
     // Initialize the Gson instance with the custom deserializer
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapter(AudioIdentifier::class.java, AudioIdentifierDeserializer())
         .create()
+
+    private val pickAudioFile = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            try {
+                val filePath = copyFileToInternalStorage(it)
+                if (filePath != null) {
+                    val fileName = File(filePath).name
+                    val customSound = AudioFile(
+                        filename = filePath,
+                        label = fileName,
+                        internal = fileName,
+                        cat = "custom",
+                        isCustom = true
+                    )
+                    customSounds.add(customSound)
+                    saveCustomSounds()
+                    updateAudioButtons()
+                    showSuccessMessage("File added successfully: $fileName")
+                } else {
+                    showErrorMessage("Failed to copy file: ${getFileName(it)}")
+                }
+            } catch (e: Exception) {
+                showErrorMessage("Error adding file: ${e.localizedMessage}")
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +100,11 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         mediaPlayerWrapper = MediaPlayerWrapperImpl(this, this)
         audioQueueFlexbox = findViewById(R.id.audioQueueFlexbox)
         buttonContainerFlexbox = findViewById(R.id.buttonContainer)
+        addCustomSoundButton = findViewById<MaterialButton>(R.id.addCustomSoundButton).apply {
+            setOnClickListener {
+                launchFilePicker()
+            }
+        }
         playButton = findViewById<MaterialButton>(R.id.playButton).apply {
             text = context.getString(R.string.play).uppercase() // Capitalize the text immediately
             setOnClickListener {
@@ -87,6 +126,8 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
 
         updateDynamicColors()
         loadAudioFiles()
+        loadCustomSounds()
+        updateAudioButtons()
         savedInstanceState?.let {
         val audioQueueJson = it.getString("audioQueue")
         if (audioQueueJson != null) {
@@ -131,7 +172,7 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
                     // Perform the actual drop action, updating your audioQueue and views
                     val item = dragEvent.localState as View
                     val fromIndex = audioQueueFlexbox.indexOfChild(item)
-                    val toIndex = calculateTargetIndex(dragEvent.x, dragEvent.y)
+                    val toIndex = calculateTargetIndex(dragEvent.y)
                     audioQueueManager.reorderAudioQueue(fromIndex, toIndex)
                     audioUIManager.updateAudioQueueUI(audioQueueManager.getAudioQueue())
                     true
@@ -151,7 +192,7 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         }
     }
 
-    private fun calculateTargetIndex(x: Float, y: Float): Int {
+    private fun calculateTargetIndex(y: Float): Int {
         for (i in 0 until audioQueueFlexbox.childCount) {
             val child = audioQueueFlexbox.getChildAt(i)
             if (y < child.bottom) {
@@ -226,8 +267,9 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
 
     private fun loadAudioFiles() {
         loadCategories() // Load categories first
+        loadCustomSounds() // Load custom sounds
         val jsonString = loadJsonFromAssets("voice_files.json")
-        val audioFiles = AudioFileParser().parse(jsonString)
+        val audioFiles = AudioFileParser().parse(jsonString, customSounds)
         setupAudioButtons(audioFiles)
     }
 
@@ -243,16 +285,15 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
     }
 
     private fun setupAudioButtons(audioFiles: List<AudioFile>) {
-        val categorizedFiles = audioFiles.groupBy { it.cat ?: "uncategorized" }
+        val categorizedFiles = audioFiles.groupBy { it.cat ?: "other" }
         categories.forEach { category ->
-            addCategoryTitle(category.name)
-            categorizedFiles[category.id]?.forEach { audioFile ->
-                addButtonForAudioFile(audioFile)
+            val filesForCategory = categorizedFiles[category.id] ?: emptyList()
+            if (filesForCategory.isNotEmpty() || category.id == "other") {
+                addCategoryTitle(category.name)
+                filesForCategory.forEach { audioFile ->
+                    addButtonForAudioFile(audioFile)
+                }
             }
-        }
-        // Handle uncategorized items
-        categorizedFiles["uncategorized"]?.forEach { audioFile ->
-            addButtonForAudioFile(audioFile)
         }
     }
 
@@ -306,5 +347,76 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
                 // playAudioQueue()
             }
         }
+    }
+
+    private fun launchFilePicker() {
+        pickAudioFile.launch("audio/*")
+    }
+
+    private fun copyFileToInternalStorage(uri: Uri): String? {
+        val inputStream = contentResolver.openInputStream(uri) ?: return null
+        val fileName = getFileName(uri)
+        val outputFile = File(getExternalFilesDir(null), "custom_sounds/$fileName")
+        outputFile.parentFile?.mkdirs()
+        inputStream.use { input ->
+            outputFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+        return outputFile.absolutePath
+    }
+
+    private fun getFileName(uri: Uri): String {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor = contentResolver.query(uri, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (index != -1) {
+                        result = it.getString(index)
+                    }
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result?.lastIndexOf('/')
+            if (cut != -1) {
+                result = result?.substring(cut!! + 1)
+            }
+        }
+        return result ?: "unknown_file"
+    }
+
+    private fun saveCustomSounds() {
+        val sharedPrefs = getSharedPreferences("CustomSounds", Context.MODE_PRIVATE)
+        val editor = sharedPrefs.edit()
+        editor.putString("customSounds", gson.toJson(customSounds))
+        editor.apply()
+    }
+
+    private fun loadCustomSounds() {
+        val sharedPrefs = getSharedPreferences("CustomSounds", Context.MODE_PRIVATE)
+        val customSoundsJson = sharedPrefs.getString("customSounds", null)
+        if (customSoundsJson != null) {
+            val type = object : TypeToken<List<AudioFile>>() {}.type
+            customSounds.clear()
+            customSounds.addAll(gson.fromJson(customSoundsJson, type))
+        }
+    }
+
+    private fun showErrorMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showSuccessMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateAudioButtons() {
+        buttonContainerFlexbox.removeAllViews()
+        val audioFiles = AudioFileParser().parse(loadJsonFromAssets("voice_files.json"), customSounds)
+        setupAudioButtons(audioFiles)
     }
 }

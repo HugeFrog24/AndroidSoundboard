@@ -28,6 +28,21 @@
         </com.google.android.flexbox.FlexboxLayout>
     </ScrollView>
 
+    <!-- Add Custom Sound button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addCustomSoundButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add"
+        app:icon="@android:drawable/ic_input_add"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        style="@style/Widget.Material3.Button"
+        app:layout_constraintTop_toBottomOf="@id/scrollViewAudioQueue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/playButton"
+        app:layout_constraintBottom_toTopOf="@id/scrollViewButtons" />
+
     <!-- Updated Play button without outline -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/playButton"
@@ -40,8 +55,8 @@
         style="@style/Widget.Material3.Button"
         app:layout_constraintTop_toBottomOf="@id/scrollViewAudioQueue"
         app:layout_constraintBottom_toTopOf="@id/scrollViewButtons"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/addCustomSoundButton"
+        app:layout_constraintEnd_toStartOf="@id/clearQueueButton" />
 
     <!-- Updated Clear button without outline -->
     <com.google.android.material.button.MaterialButton

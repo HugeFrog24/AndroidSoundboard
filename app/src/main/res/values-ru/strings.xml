@@ -12,4 +12,7 @@
     <string name="category_units">Единицы</string>
     <string name="category_trains">Поезда</string>
     <string name="category_names">Имена</string>
+    <string name="category_other">Другое</string>
+    <string name="category_custom">Пользовательский</string>
+    <string name="add">Добавить</string>
 </resources>

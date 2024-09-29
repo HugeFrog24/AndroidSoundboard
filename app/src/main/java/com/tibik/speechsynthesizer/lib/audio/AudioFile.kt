@@ -4,5 +4,6 @@ data class AudioFile(
     val filename: String,
     val label: String,
     val internal: String,
-    val cat: String? // Make category optional
+    val cat: String?, // Make category optional
+    val isCustom: Boolean = false
 )

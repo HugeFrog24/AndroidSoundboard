@@ -12,4 +12,7 @@
     <string name="category_units">Einheiten</string>
     <string name="category_trains">Züge</string>
     <string name="category_names">Namen</string>
+    <string name="category_other">Sonstiges</string>
+    <string name="category_custom">Benutzerdefiniert</string>
+    <string name="add">Hinzufügen</string>
 </resources>

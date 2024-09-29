@@ -3,7 +3,7 @@ package com.tibik.speechsynthesizer.lib.audio
 import org.json.JSONArray
 
 class AudioFileParser {
-    fun parse(jsonString: String): List<AudioFile> {
+    fun parse(jsonString: String, customSounds: List<AudioFile>): List<AudioFile> {
         val jsonArray = JSONArray(jsonString)
         val audioFiles = mutableListOf<AudioFile>()
 
@@ -13,11 +13,13 @@ class AudioFileParser {
                 filename = jsonObject.getString("filename"),
                 label = jsonObject.getString("label"),
                 internal = jsonObject.getString("internal"),
-                cat = jsonObject.optString("cat", null) // Use optString to allow for null if "cat" is not present
+                cat = jsonObject.optString("cat", null),
+                isCustom = false
             )
             audioFiles.add(audioFile)
         }
 
+        audioFiles.addAll(customSounds)
         return audioFiles
     }
 }

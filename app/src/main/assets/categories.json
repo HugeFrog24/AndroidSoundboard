@@ -5,5 +5,7 @@
   { "id": "greetings" },
   { "id": "units" },
   { "id": "trains" },
-  { "id": "names" }
+  { "id": "names" },
+  { "id": "other" },
+  { "id": "custom" }
 ]
