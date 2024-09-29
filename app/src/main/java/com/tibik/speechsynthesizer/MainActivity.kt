@@ -249,6 +249,7 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
             when (val audioIdentifier = audioQueue[currentIndex]) {
                 is AudioIdentifier.ResourceId -> mediaPlayerWrapper.playAudioResource(audioIdentifier.id)
                 is AudioIdentifier.AssetFilename -> mediaPlayerWrapper.playAudioFromAssets(audioIdentifier.filename)
+                is AudioIdentifier.FilePath -> mediaPlayerWrapper.playAudioFromFile(audioIdentifier.path)
             }
         }
     }
@@ -320,7 +321,12 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
                 val button = view as MaterialButton
                 button.text = audioFile.label
                 button.setOnClickListener {
-                    enqueueAudio(AudioIdentifier.AssetFilename("voice/${audioFile.filename}"))
+                    val audioIdentifier = if (audioFile.isCustom) {
+                        AudioIdentifier.FilePath(audioFile.filename)
+                    } else {
+                        AudioIdentifier.AssetFilename("voice/${audioFile.filename}")
+                    }
+                    enqueueAudio(audioIdentifier)
                 }
                 buttonContainerFlexbox.addView(button)
             }

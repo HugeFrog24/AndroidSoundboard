@@ -8,14 +8,22 @@ class AudioIdentifierDeserializer : JsonDeserializer<AudioIdentifier> {
         val jsonObject = json.asJsonObject
 
         // Determine the type based on the presence of specific fields
-        return if (jsonObject.has("id")) {
-            // Deserialize as ResourceId
-            context.deserialize(json, AudioIdentifier.ResourceId::class.java)
-        } else if (jsonObject.has("filename")) {
-            // Deserialize as AssetFilename
-            context.deserialize(json, AudioIdentifier.AssetFilename::class.java)
-        } else {
-            throw JsonParseException("Unknown type of AudioIdentifier in JSON")
+        return when {
+            jsonObject.has("id") -> {
+                // Deserialize as ResourceId
+                context.deserialize(json, AudioIdentifier.ResourceId::class.java)
+            }
+            jsonObject.has("filename") -> {
+                // Deserialize as AssetFilename
+                context.deserialize(json, AudioIdentifier.AssetFilename::class.java)
+            }
+            jsonObject.has("path") -> {
+                // Deserialize as FilePath
+                context.deserialize(json, AudioIdentifier.FilePath::class.java)
+            }
+            else -> {
+                throw JsonParseException("Unknown type of AudioIdentifier in JSON")
+            }
         }
     }
 }

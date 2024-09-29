@@ -34,6 +34,7 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
         when (audioIdentifier) {
             is AudioIdentifier.ResourceId -> "Audio Item ${audioIdentifier.id}"
             is AudioIdentifier.AssetFilename -> audioIdentifier.filename.substringAfterLast("/")
+            is AudioIdentifier.FilePath -> audioIdentifier.path.substringAfterLast("/")
         }
 
     // Include other UI update methods here...

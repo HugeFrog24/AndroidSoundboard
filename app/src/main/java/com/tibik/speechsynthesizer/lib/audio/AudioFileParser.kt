@@ -13,7 +13,7 @@ class AudioFileParser {
                 filename = jsonObject.getString("filename"),
                 label = jsonObject.getString("label"),
                 internal = jsonObject.getString("internal"),
-                cat = jsonObject.optString("cat", null),
+                cat = if (jsonObject.has("cat")) jsonObject.getString("cat") else null,
                 isCustom = false
             )
             audioFiles.add(audioFile)

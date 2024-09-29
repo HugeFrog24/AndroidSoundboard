@@ -35,6 +35,23 @@ class MediaPlayerWrapperImpl(private val context: Context, private val callback:
         }
     }
 
+    override fun playAudioFromFile(path: String) {
+        try {
+            mediaPlayer?.release()
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(path)
+                prepare()
+                setOnCompletionListener {
+                    callback.onAudioComplete()
+                }
+                start()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            // Optionally, notify user of the error
+        }
+    }
+
     override fun pause() {
         mediaPlayer?.pause()
     }
