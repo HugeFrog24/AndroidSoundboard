@@ -4,6 +4,7 @@ import AudioIdentifierDeserializer
 import android.content.Context
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.TypedValue
@@ -11,11 +12,20 @@ import android.view.DragEvent
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.ui.platform.ComposeView
+import android.view.ViewGroup
+import androidx.annotation.RequiresApi
+import androidx.compose.ui.platform.LocalContext
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.DynamicColors
@@ -23,6 +33,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.tibik.speechsynthesizer.audioqueue.AudioQueueManager
+import com.tibik.speechsynthesizer.changelog.ChangelogDialog
+import com.tibik.speechsynthesizer.changelog.ChangelogItem
+import com.tibik.speechsynthesizer.changelog.ChangelogManager
 import com.tibik.speechsynthesizer.lib.audio.AudioFile
 import com.tibik.speechsynthesizer.lib.audio.AudioFileParser
 import com.tibik.speechsynthesizer.lib.audio.AudioIdentifier
@@ -33,13 +46,13 @@ import com.tibik.speechsynthesizer.ui.AudioUIManager
 import java.io.File
 import java.io.IOException
 
-class MainActivity : AppCompatActivity(), MediaPlayerCallback {
+class MainActivity : AppCompatActivity(), MediaPlayerCallback, AudioUIManager.OnAudioQueueChangeListener {
     private lateinit var mediaPlayerWrapper: MediaPlayerWrapper
     private lateinit var audioQueueManager: AudioQueueManager
     private lateinit var audioUIManager: AudioUIManager
     private var isAudioPlaying = false
     private var currentIndex = 0
-    private lateinit var audioQueueFlexbox: FlexboxLayout
+    private lateinit var audioQueueContainer: FrameLayout
     private lateinit var buttonContainerFlexbox: FlexboxLayout
     private lateinit var playButton: MaterialButton
     private lateinit var categories: List<Category>
@@ -59,6 +72,7 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         "other" to R.string.category_other,
         "custom" to R.string.category_custom  // Add this line
     )
+
 
     // Initialize the Gson instance with the custom deserializer
     private val gson: Gson = GsonBuilder()
@@ -91,46 +105,69 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Apply dynamic color theme
         DynamicColors.applyToActivityIfAvailable(this)
         setContentView(R.layout.activity_main)
 
-        mediaPlayerWrapper = MediaPlayerWrapperImpl(this, this)
-        audioQueueFlexbox = findViewById(R.id.audioQueueFlexbox)
-        buttonContainerFlexbox = findViewById(R.id.buttonContainer)
-        addCustomSoundButton = findViewById<MaterialButton>(R.id.addCustomSoundButton).apply {
-            setOnClickListener {
-                launchFilePicker()
-            }
-        }
-        playButton = findViewById<MaterialButton>(R.id.playButton).apply {
-            text = context.getString(R.string.play).uppercase() // Capitalize the text immediately
-            setOnClickListener {
-                togglePlayback()
-            }
-        }
-        clearQueueButton = findViewById<MaterialButton>(R.id.clearQueueButton).apply {
-            text = context.getString(R.string.clear).uppercase()
-            setOnClickListener {
-                clearAudioQueue()
-            }
-        }
+        // Initialize components
+        initializeComponents()
 
+        // Load data
+        loadData()
+
+        // Setup UI
+        setupUI()
+
+        // Restore state if needed
+        restoreState(savedInstanceState)
+
+        // Show the changelog dialog if needed
+        showChangelogIfNeeded()
+    }
+
+    private fun initializeComponents() {
         audioQueueManager = AudioQueueManager()
-        audioUIManager = AudioUIManager(this, audioQueueFlexbox)
+        mediaPlayerWrapper = MediaPlayerWrapperImpl(this, this)
+        audioQueueContainer = findViewById(R.id.audioQueueContainer)
+        buttonContainerFlexbox = findViewById(R.id.buttonContainer)
+        audioUIManager = AudioUIManager(this, audioQueueContainer)
+        audioUIManager.setOnAudioQueueChangeListener(this)
+    }
 
-        // Now that playButton is initialized, you can safely call updatePlayButtonState
-        updatePlayButtonState()
-
-        updateDynamicColors()
+    private fun loadData() {
         loadAudioFiles()
         loadCustomSounds()
+    }
+
+    private fun setupUI() {
+        setupButtons()
+        updateDynamicColors()
         updateAudioButtons()
+        setupDragAndDrop()
+    }
+
+    private fun setupButtons() {
+        addCustomSoundButton = findViewById<MaterialButton>(R.id.addCustomSoundButton).apply {
+            setOnClickListener { launchFilePicker() }
+        }
+        playButton = findViewById<MaterialButton>(R.id.playButton).apply {
+            text = context.getString(R.string.play)
+            setOnClickListener { togglePlayback() }
+        }
+        clearQueueButton = findViewById<MaterialButton>(R.id.clearQueueButton).apply {
+            text = context.getString(R.string.clear)
+            setOnClickListener { clearAudioQueue() }
+        }
+        updatePlayButtonState()
+    }
+
+    private fun restoreState(savedInstanceState: Bundle?) {
         savedInstanceState?.let {
-        val audioQueueJson = it.getString("audioQueue")
-        if (audioQueueJson != null) {
+            val audioQueueJson = it.getString("audioQueue")
+            if (audioQueueJson != null) {
                 val type = object : TypeToken<List<AudioIdentifier>>() {}.type
                 val audioQueueList: List<AudioIdentifier> = gson.fromJson(audioQueueJson, type)
                 audioQueueManager.clearAudioQueue()
@@ -138,7 +175,47 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
             }
         }
         audioUIManager.updateAudioQueueUI(audioQueueManager.getAudioQueue())
-        setupDragAndDrop()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun showChangelogIfNeeded() {
+        val changelogManager = ChangelogManager(this)
+        if (changelogManager.shouldShowChangelog()) {
+            val changelogItems = changelogManager.parseChangelog()
+            showChangelogDialog(changelogItems, changelogManager)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun showChangelogDialog(changelogItems: List<ChangelogItem>, changelogManager: ChangelogManager) {
+        val composeView = ComposeView(this).apply {
+            setContent {
+                // Obtain the dynamic color scheme based on the current theme
+                val dynamicColorScheme = if (isSystemInDarkTheme()) {
+                    dynamicDarkColorScheme(LocalContext.current)
+                } else {
+                    dynamicLightColorScheme(LocalContext.current)
+                }
+
+                // Apply the dynamic color scheme to MaterialTheme
+                MaterialTheme(
+                    colorScheme = dynamicColorScheme
+                ) {
+                    ChangelogDialog(
+                        changelogItems = changelogItems,
+                        onDismiss = {
+                            this@apply.visibility = View.GONE
+                            (parent as? ViewGroup)?.removeView(this)
+                        },
+                        onDontShowAgain = { dontShow ->
+                            changelogManager.setDontShowChangelog(dontShow)
+                        }
+                    )
+                }
+            }
+        }
+
+        findViewById<ViewGroup>(android.R.id.content).addView(composeView)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -160,7 +237,7 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
     }
 
     private fun setupDragAndDrop() {
-        audioQueueFlexbox.setOnDragListener { view, dragEvent ->
+        audioQueueContainer.setOnDragListener { view, dragEvent ->
             when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_STARTED -> true
                 DragEvent.ACTION_DRAG_ENTERED -> {
@@ -171,7 +248,7 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
                 DragEvent.ACTION_DROP -> {
                     // Perform the actual drop action, updating your audioQueue and views
                     val item = dragEvent.localState as View
-                    val fromIndex = audioQueueFlexbox.indexOfChild(item)
+                    val fromIndex = audioQueueContainer.indexOfChild(item)
                     val toIndex = calculateTargetIndex(dragEvent.y)
                     audioQueueManager.reorderAudioQueue(fromIndex, toIndex)
                     audioUIManager.updateAudioQueueUI(audioQueueManager.getAudioQueue())
@@ -193,13 +270,13 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
     }
 
     private fun calculateTargetIndex(y: Float): Int {
-        for (i in 0 until audioQueueFlexbox.childCount) {
-            val child = audioQueueFlexbox.getChildAt(i)
+        for (i in 0 until audioQueueContainer.childCount) {
+            val child = audioQueueContainer.getChildAt(i)
             if (y < child.bottom) {
                 return i
             }
         }
-        return audioQueueFlexbox.childCount - 1
+        return audioQueueContainer.childCount - 1
     }
 
     private fun updateDynamicColors() {
@@ -224,7 +301,7 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         }
 
         runOnUiThread {
-            playButton.text = getString(textResId).uppercase()
+            playButton.text = getString(textResId)
             playButton.icon = AppCompatResources.getDrawable(this, iconResId)
         }
     }
@@ -424,5 +501,10 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         buttonContainerFlexbox.removeAllViews()
         val audioFiles = AudioFileParser().parse(loadJsonFromAssets("voice_files.json"), customSounds)
         setupAudioButtons(audioFiles)
+    }
+
+    override fun onAudioQueueChanged(newQueue: List<AudioIdentifier>) {
+        audioQueueManager.clearAudioQueue()
+        audioQueueManager.addAllAudios(newQueue)
     }
 }

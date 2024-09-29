@@ -16,18 +16,25 @@
         android:gravity="center_vertical"
         android:padding="8dp">
 
-        <TextView
+        <!-- Drag Handle -->
+        <FrameLayout
             android:id="@+id/dragHandle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="::"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            android:textColor="?attr/colorOnSurface"
-            android:padding="8dp"
-            android:gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/drag_handle_description"
-        />
+            android:padding="8dp">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="::"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="?attr/colorOnSurface"
+                android:gravity="center" />
+        </FrameLayout>
+
+        <!-- Expandable Text View -->
         <TextView
             android:id="@+id/audioItemTextView"
             android:layout_width="0dp"
@@ -37,6 +44,7 @@
             android:textColor="?attr/colorOnSurface"
             android:gravity="center_vertical" />
 
+        <!-- Remove Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/removeAudioItemButton"
             android:layout_width="wrap_content"

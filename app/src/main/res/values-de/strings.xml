@@ -15,4 +15,9 @@
     <string name="category_other">Sonstiges</string>
     <string name="category_custom">Benutzerdefiniert</string>
     <string name="add">Hinzufügen</string>
+    <string name="add_abbr">Hinzfg.</string>
+    <string name="whats_new">What\'s New</string>
+    <string name="ok">OK</string>
+    <string name="play_audio">Audio abspielen</string>
+    <string name="dont_show_again">Nicht mehr anzeigen</string>
 </resources>

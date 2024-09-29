@@ -3,5 +3,4 @@
     <color name="md_theme_light_primary">#6750A4</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
     <!-- ... other color definitions -->
-    <color name="md_theme_light_outline">#79747E</color>
 </resources>
