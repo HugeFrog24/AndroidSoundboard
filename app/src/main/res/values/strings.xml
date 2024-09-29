@@ -12,4 +12,5 @@
     <string name="category_units">Units</string>
     <string name="category_trains">Trains</string>
     <string name="category_names">Names</string>
+    <string name="play_audio">Play Audio</string>
 </resources>

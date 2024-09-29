@@ -28,7 +28,7 @@
         </com.google.android.flexbox.FlexboxLayout>
     </ScrollView>
 
-    <!-- Play button centered in the middle of the screen -->
+    <!-- Updated Play button without outline -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/playButton"
         android:layout_width="wrap_content"
@@ -37,11 +37,13 @@
         app:icon="@android:drawable/ic_media_play"
         app:iconGravity="textStart"
         app:iconPadding="8dp"
+        style="@style/Widget.Material3.Button"
         app:layout_constraintTop_toBottomOf="@id/scrollViewAudioQueue"
         app:layout_constraintBottom_toTopOf="@id/scrollViewButtons"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Updated Clear button without outline -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/clearQueueButton"
         android:layout_width="wrap_content"
@@ -50,6 +52,7 @@
         app:icon="@android:drawable/ic_menu_delete"
         app:iconGravity="textStart"
         app:iconPadding="8dp"
+        style="@style/Widget.Material3.Button"
         app:layout_constraintTop_toBottomOf="@id/scrollViewAudioQueue"
         app:layout_constraintStart_toEndOf="@id/playButton"
         app:layout_constraintEnd_toEndOf="parent"

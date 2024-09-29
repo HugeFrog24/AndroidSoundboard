@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.tibik.speechsynthesizer"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.tibik.speechsynthesizer"

@@ -2,25 +2,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="0dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
-    app:cardBackgroundColor="?attr/colorPrimary"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:strokeColor="?attr/colorOutline"
+    app:strokeWidth="1dp"
     android:layout_margin="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/dragHandle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="::"
-            android:textColor="?attr/colorOnPrimary"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="?attr/colorOnSurface"
             android:padding="8dp"
             android:gravity="center"
             android:contentDescription="@string/drag_handle_description"
@@ -31,19 +33,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="?attr/colorOnPrimary"
-            android:textSize="16sp"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorOnSurface"
             android:gravity="center_vertical" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/removeAudioItemButton"
-            android:layout_width="69dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/transparent"
+            style="@style/Widget.Material3.Button.IconButton"
             app:icon="@android:drawable/ic_menu_close_clear_cancel"
-            app:iconSize="28dp"
-            app:iconTint="?attr/colorOnPrimary"
-            app:rippleColor="?attr/colorOnPrimary"
+            app:iconTint="?attr/colorOnSurface"
             android:contentDescription="@string/remove_audio_item_description" />
     </LinearLayout>
 

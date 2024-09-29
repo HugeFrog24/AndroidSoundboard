@@ -2,8 +2,8 @@ package com.tibik.speechsynthesizer
 
 import AudioIdentifierDeserializer
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.DragEvent
 import android.view.Gravity
@@ -40,6 +40,18 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
     private lateinit var categories: List<Category>
     private lateinit var clearQueueButton: MaterialButton
 
+    // Define the mapping from category IDs to resource IDs
+    private val categoryIdToResId = mapOf(
+        "numbers" to R.string.category_numbers,
+        "stations" to R.string.category_stations,
+        "directions" to R.string.category_directions,
+        "greetings" to R.string.category_greetings,
+        "units" to R.string.category_units,
+        "trains" to R.string.category_trains,
+        "names" to R.string.category_names
+        // Add other categories as needed
+    )
+
     // Initialize the Gson instance with the custom deserializer
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapter(AudioIdentifier::class.java, AudioIdentifierDeserializer())
@@ -47,7 +59,7 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Apply dynamic color theme overlays if available
+        // Apply dynamic color theme
         DynamicColors.applyToActivityIfAvailable(this)
         setContentView(R.layout.activity_main)
 
@@ -193,9 +205,7 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
     private fun playAudioQueue() {
         val audioQueue = audioQueueManager.getAudioQueue()
         if (audioQueue.isNotEmpty() && isAudioPlaying && currentIndex >= 0 && currentIndex < audioQueue.size) {
-            val audioIdentifier = audioQueue[currentIndex]
-
-            when (audioIdentifier) {
+            when (val audioIdentifier = audioQueue[currentIndex]) {
                 is AudioIdentifier.ResourceId -> mediaPlayerWrapper.playAudioResource(audioIdentifier.id)
                 is AudioIdentifier.AssetFilename -> mediaPlayerWrapper.playAudioFromAssets(audioIdentifier.filename)
             }
@@ -226,10 +236,8 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         val type = object : TypeToken<List<Category>>() {}.type
         val tempCategories: List<Category> = Gson().fromJson(jsonString, type)
         categories = tempCategories.map { category ->
-            Log.d("LoadCategories", "Package Name: $packageName")
-            val resId = resources.getIdentifier("category_${category.id}", "string", packageName)
-            Log.d("LoadCategories", "Category: ${category.id}, ResId: $resId")
-            category.name = if (resId != 0) getString(resId) else category.id
+            val resId = categoryIdToResId[category.id]
+            category.name = if (resId != null) getString(resId) else category.id
             category
         }
     }
@@ -281,12 +289,6 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback {
         audioQueueManager.addAudio(audioIdentifier)
         audioUIManager.updateAudioQueueUI(audioQueueManager.getAudioQueue())
     }
-
-    private fun getAudioItemName(audioIdentifier: AudioIdentifier): String =
-        when (audioIdentifier) {
-            is AudioIdentifier.ResourceId -> "Audio Item ${audioIdentifier.id}"
-            is AudioIdentifier.AssetFilename -> audioIdentifier.filename
-        }
 
     override fun onAudioComplete() {
         runOnUiThread {
