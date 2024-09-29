@@ -59,6 +59,8 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback, AudioUIManager.On
     private lateinit var clearQueueButton: MaterialButton
     private lateinit var addCustomSoundButton: MaterialButton
     private val customSounds = mutableListOf<AudioFile>()
+    private var isChangelogDialogVisible = false
+    private lateinit var changelogManager: ChangelogManager
 
     // Define the mapping from category IDs to resource IDs
     private val categoryIdToResId = mapOf(
@@ -115,6 +117,9 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback, AudioUIManager.On
         // Initialize components
         initializeComponents()
 
+        // Initialize changelogManager
+        changelogManager = ChangelogManager(this)
+
         // Load data
         loadData()
 
@@ -124,8 +129,21 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback, AudioUIManager.On
         // Restore state if needed
         restoreState(savedInstanceState)
 
-        // Show the changelog dialog if needed
-        showChangelogIfNeeded()
+        if (savedInstanceState != null) {
+            // Restoring after rotation or similar
+            isChangelogDialogVisible = savedInstanceState.getBoolean("isChangelogDialogVisible", false)
+        } else {
+            // Fresh start
+            isChangelogDialogVisible = false
+            if (changelogManager.shouldShowChangelog()) {
+                isChangelogDialogVisible = true
+            }
+        }
+
+        if (isChangelogDialogVisible) {
+            val changelogItems = changelogManager.parseChangelog()
+            showChangelogDialog(changelogItems)
+        }
     }
 
     private fun initializeComponents() {
@@ -178,34 +196,24 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback, AudioUIManager.On
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun showChangelogIfNeeded() {
-        val changelogManager = ChangelogManager(this)
-        if (changelogManager.shouldShowChangelog()) {
-            val changelogItems = changelogManager.parseChangelog()
-            showChangelogDialog(changelogItems, changelogManager)
-        }
-    }
+    private fun showChangelogDialog(changelogItems: List<ChangelogItem>) {
+        isChangelogDialogVisible = true  // Dialog is now visible
 
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun showChangelogDialog(changelogItems: List<ChangelogItem>, changelogManager: ChangelogManager) {
         val composeView = ComposeView(this).apply {
             setContent {
-                // Obtain the dynamic color scheme based on the current theme
                 val dynamicColorScheme = if (isSystemInDarkTheme()) {
                     dynamicDarkColorScheme(LocalContext.current)
                 } else {
                     dynamicLightColorScheme(LocalContext.current)
                 }
 
-                // Apply the dynamic color scheme to MaterialTheme
-                MaterialTheme(
-                    colorScheme = dynamicColorScheme
-                ) {
+                MaterialTheme(colorScheme = dynamicColorScheme) {
                     ChangelogDialog(
                         changelogItems = changelogItems,
                         onDismiss = {
                             this@apply.visibility = View.GONE
                             (parent as? ViewGroup)?.removeView(this)
+                            isChangelogDialogVisible = false  // Dialog has been dismissed
                         },
                         onDontShowAgain = { dontShow ->
                             changelogManager.setDontShowChangelog(dontShow)
@@ -220,10 +228,9 @@ class MainActivity : AppCompatActivity(), MediaPlayerCallback, AudioUIManager.On
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        // Convert your audio queue to a JSON string or another suitable format
         val audioQueueJson = gson.toJson(audioQueueManager.getAudioQueue())
-        // Save the JSON string to the outState Bundle
         outState.putString("audioQueue", audioQueueJson)
+        outState.putBoolean("isChangelogDialogVisible", isChangelogDialogVisible)
     }
 
     private fun clearAudioQueue() {
