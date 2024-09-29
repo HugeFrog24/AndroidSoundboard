@@ -34,10 +34,10 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
     }
 
     private fun setupRecyclerView() {
-        adapter = AudioItemAdapter()  // Initialize the adapter here
+        adapter = AudioItemAdapter()
         recyclerView = RecyclerView(context).apply {
             layoutManager = LinearLayoutManager(context)
-            this.adapter = this@AudioUIManager.adapter  // Use the initialized adapter
+            this.adapter = this@AudioUIManager.adapter
             layoutParams = FlexboxLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -108,6 +108,8 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
                     if (position != RecyclerView.NO_POSITION) {
                         audioItems.removeAt(position)
                         notifyItemRemoved(position)
+                        // Notify the listener about the change
+                        audioQueueChangeListener?.onAudioQueueChanged(audioItems.toList())
                     }
                 }
                 dragHandle.setOnTouchListener { v, event ->
