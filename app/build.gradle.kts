@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
+    id("io.gitlab.arturbosch.detekt") version "1.23.7"
 }
 
 android {
@@ -48,37 +48,24 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    // Custom source sets configuration
     sourceSets {
         getByName("main") {
             java.srcDir("src/main/kotlin")
+            kotlin.srcDir("src/alt") // Adding your custom source directory for Kotlin files
         }
     }
 }
 
-dependencies {
-    implementation(libs.flexbox)
-    implementation(libs.androidx.constraintlayout.compose)
-    implementation(libs.gson)
-    implementation(libs.material3)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.appcompat.resources)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.recyclerview)
-    implementation (libs.accompanist.systemuicontroller)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+detekt {
+    source.setFrom(files("src/main/kotlin", "src/test/kotlin", "src/alt"))
+    config.setFrom(files("$projectDir/config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    reports {
+        sarif.required.set(true)
+    }
 }
