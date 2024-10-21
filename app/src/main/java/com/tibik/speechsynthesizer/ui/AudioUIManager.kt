@@ -10,6 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.button.MaterialButton
 import com.tibik.speechsynthesizer.R
@@ -63,18 +65,19 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
             is AudioIdentifier.FilePath -> audioIdentifier.path.substringAfterLast("/")
         }
 
-    inner class AudioItemAdapter : RecyclerView.Adapter<AudioItemAdapter.ViewHolder>() {
-        private val audioItems = mutableListOf<AudioIdentifier>()
+    inner class AudioItemAdapter : ListAdapter<AudioIdentifier, AudioItemAdapter.ViewHolder>(DiffCallback()) {
         private lateinit var itemTouchHelper: ItemTouchHelper
 
-        fun submitList(newList: List<AudioIdentifier>) {
-            audioItems.clear()
-            audioItems.addAll(newList)
-            notifyDataSetChanged()
+        init {
+            setHasStableIds(true)
         }
 
-        fun setItemTouchHelper(touchHelper: ItemTouchHelper) {
-            itemTouchHelper = touchHelper
+        override fun getItemId(position: Int): Long {
+            return when (val item = getItem(position)) {
+                is AudioIdentifier.ResourceId -> item.id.toLong()
+                is AudioIdentifier.AssetFilename -> item.filename.hashCode().toLong()
+                is AudioIdentifier.FilePath -> item.path.hashCode().toLong()
+            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -83,17 +86,21 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val audioIdentifier = audioItems[position]
+            val audioIdentifier = getItem(position)
             holder.bind(audioIdentifier)
         }
 
-        override fun getItemCount() = audioItems.size
+        fun setItemTouchHelper(touchHelper: ItemTouchHelper) {
+            itemTouchHelper = touchHelper
+        }
 
         fun onItemMove(fromPosition: Int, toPosition: Int) {
-            val item = audioItems.removeAt(fromPosition)
-            audioItems.add(toPosition, item)
-            notifyItemMoved(fromPosition, toPosition)
-            audioQueueChangeListener?.onAudioQueueChanged(audioItems.toList())
+            val currentList = currentList.toMutableList()
+            val movedItem = currentList.removeAt(fromPosition)
+            currentList.add(toPosition, movedItem)
+            submitList(currentList) {
+                audioQueueChangeListener?.onAudioQueueChanged(currentList)
+            }
         }
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -104,12 +111,12 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
             fun bind(audioIdentifier: AudioIdentifier) {
                 audioItemView.text = getAudioItemName(audioIdentifier)
                 removeButton.setOnClickListener {
-                    val position = adapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
-                        audioItems.removeAt(position)
-                        notifyItemRemoved(position)
-                        // Notify the listener about the change
-                        audioQueueChangeListener?.onAudioQueueChanged(audioItems.toList())
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                        val updatedList = currentList.toMutableList()
+                        updatedList.removeAt(bindingAdapterPosition)
+                        submitList(updatedList) {
+                            audioQueueChangeListener?.onAudioQueueChanged(updatedList)
+                        }
                     }
                 }
                 dragHandle.setOnTouchListener { v, event ->
@@ -139,6 +146,24 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             // Not used in this implementation
+        }
+    }
+
+    private class DiffCallback : DiffUtil.ItemCallback<AudioIdentifier>() {
+        override fun areItemsTheSame(oldItem: AudioIdentifier, newItem: AudioIdentifier): Boolean {
+            return when {
+                oldItem is AudioIdentifier.ResourceId && newItem is AudioIdentifier.ResourceId ->
+                    oldItem.id == newItem.id
+                oldItem is AudioIdentifier.AssetFilename && newItem is AudioIdentifier.AssetFilename ->
+                    oldItem.filename == newItem.filename
+                oldItem is AudioIdentifier.FilePath && newItem is AudioIdentifier.FilePath ->
+                    oldItem.path == newItem.path
+                else -> false
+            }
+        }
+
+        override fun areContentsTheSame(oldItem: AudioIdentifier, newItem: AudioIdentifier): Boolean {
+            return oldItem == newItem
         }
     }
 }
