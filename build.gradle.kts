@@ -9,4 +9,10 @@ detekt {
     buildUponDefaultConfig = true
     allRules = false
     config.setFrom(files("$projectDir/config/detekt/detekt.yml"))
+    reports {
+        sarif {
+            enabled = true
+            destination = file("build/reports/detekt/detekt.sarif")
+        }
+    }
 }

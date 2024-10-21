@@ -43,11 +43,11 @@ jobs:
         name: lint-results
         path: app/build/reports/lint-results-debug.html
 
-    - name: Upload detekt results
+    - name: Upload SARIF results
       uses: actions/upload-artifact@v4
       with:
         name: detekt-results
-        path: build/reports/detekt/detekt.html
+        path: build/reports/detekt/detekt.sarif
 
     - name: Upload ktlint results
       uses: actions/upload-artifact@v4
