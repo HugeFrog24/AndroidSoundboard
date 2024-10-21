@@ -6,6 +6,7 @@ plugins {
 }
 
 detekt {
+    basePath = project.rootDir.path
     buildUponDefaultConfig = true
     allRules = false
     config.setFrom(files("$projectDir/config/detekt/detekt.yml"))

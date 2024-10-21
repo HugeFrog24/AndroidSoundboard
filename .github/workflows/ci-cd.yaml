@@ -43,11 +43,10 @@ jobs:
         name: lint-results
         path: app/build/reports/lint-results-debug.html
 
-    - name: Upload SARIF results
-      uses: actions/upload-artifact@v4
+    - name: Upload SARIF to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v3
       with:
-        name: detekt-results
-        path: build/reports/detekt/detekt.sarif
+        sarif_file: build/reports/detekt/detekt.sarif
 
     - name: Upload ktlint results
       uses: actions/upload-artifact@v4
