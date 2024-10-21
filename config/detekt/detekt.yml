@@ -1,0 +1,28 @@
+formatting:
+  Indentation:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+  ParameterListWrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+
+style:
+  MaxLineLength:
+    active: true
+    maxLineLength: 120
+
+complexity:
+  LongMethod:
+    active: true
+    threshold: 60
+  ComplexMethod:
+    active: true
+    threshold: 15
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 20
+    thresholdInClasses: 20
+    thresholdInInterfaces: 20
+    thresholdInObjects: 20
