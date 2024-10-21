@@ -6,14 +6,15 @@ plugins {
 }
 
 detekt {
-    basePath = project.rootDir.path
+    basePath = rootProject.projectDir.absolutePath
     buildUponDefaultConfig = true
     allRules = false
     config.setFrom(files("$projectDir/config/detekt/detekt.yml"))
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     reports {
-        sarif {
-            enabled = true
-            destination = file("build/reports/detekt/detekt.sarif")
-        }
+        sarif.required.set(true)
+        sarif.outputLocation.set(file("build/reports/detekt/detekt.sarif"))
     }
 }
