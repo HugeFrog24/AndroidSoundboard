@@ -8,5 +8,5 @@ plugins {
 detekt {
     buildUponDefaultConfig = true
     allRules = false
-    config = files("$projectDir/config/detekt/detekt.yml")
+    config.setFrom(files("$projectDir/config/detekt/detekt.yml"))
 }

@@ -1,0 +1,56 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code_quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        restore-keys: ${{ runner.os }}-gradle
+
+    - name: Run ktlint
+      run: ./gradlew ktlintCheck
+      continue-on-error: true
+
+    - name: Run Android Lint
+      run: ./gradlew lint
+
+    - name: Run Detekt
+      run: ./gradlew detekt
+
+    - name: Upload lint results
+      uses: actions/upload-artifact@v4
+      with:
+        name: lint-results
+        path: app/build/reports/lint-results-debug.html
+
+    - name: Upload detekt results
+      uses: actions/upload-artifact@v4
+      with:
+        name: detekt-results
+        path: build/reports/detekt/detekt.html
+
+    - name: Upload ktlint results
+      uses: actions/upload-artifact@v4
+      with:
+        name: ktlint-results
+        path: app/build/reports/ktlint/
