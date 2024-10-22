@@ -39,6 +39,8 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.11"
@@ -68,4 +70,12 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     reports {
         sarif.required.set(true)
     }
+}
+
+dependencies {
+    implementation(libs.androidx.material3.v121)
+    implementation(libs.material.v150)
+    implementation(libs.flexbox)
+    implementation(libs.gson)
+    implementation(libs.androidx.recyclerview)
 }
