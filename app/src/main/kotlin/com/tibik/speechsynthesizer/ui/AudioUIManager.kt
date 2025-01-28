@@ -140,7 +140,7 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
         }
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-            adapter.onItemMove(viewHolder.adapterPosition, target.adapterPosition)
+            adapter.onItemMove(viewHolder.getBindingAdapterPosition(), target.getBindingAdapterPosition())
             return true
         }
 
