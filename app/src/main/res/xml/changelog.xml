@@ -3,5 +3,6 @@
     <release version="1.3.4">
         <change>📱 New bottom navigation with dedicated custom sounds section</change>
         <change>🌐 Updated German and Russian translations</change>
+        <change>👆 Swipe to remove items from the queue</change>
     </release>
 </changelog>
