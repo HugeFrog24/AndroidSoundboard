@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Sprachsynthesizer</string>
     <string name="play">Abspielen</string>
@@ -20,4 +21,8 @@
     <string name="ok">OK</string>
     <string name="play_audio">Audio abspielen</string>
     <string name="dont_show_again">Nicht mehr anzeigen</string>
+    <string name="nav_home">Start</string>
+    <string name="nav_custom_sounds">Eigene Sounds</string>
+    <string name="no_custom_sounds">Noch keine eigenen Sounds.\nTippen Sie oben auf +, um eigene Sounds hinzuzufügen.</string>
+    <string name="no_sounds_available">Keine Sounds in dieser Kategorie verfügbar.</string>
 </resources>

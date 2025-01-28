@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Синтезатор речи</string>
     <string name="play">Восроизвести</string>
@@ -20,4 +21,8 @@
     <string name="ok">OK</string>
     <string name="play_audio">Проиграть аудио</string>
     <string name="dont_show_again">Больше не показывать</string>
+    <string name="nav_home">Главная</string>
+    <string name="nav_custom_sounds">Свои звуки</string>
+    <string name="no_custom_sounds">Пока нет своих звуков.\nНажмите + вверху, чтобы добавить свои звуки.</string>
+    <string name="no_sounds_available">В этой категории нет звуков.</string>
 </resources>
