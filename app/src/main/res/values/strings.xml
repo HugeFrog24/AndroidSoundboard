@@ -25,4 +25,13 @@
     <string name="nav_custom_sounds">Custom Sounds</string>
     <string name="no_custom_sounds">No custom sounds yet.\nTap the + button above to add your own sounds.</string>
     <string name="no_sounds_available">No sounds available in this category.</string>
+    <string name="download_voice_files">Download Voice Files</string>
+    <string name="retry_download">Retry Download</string>
+    <string name="checking_voice_files">Checking voice files…</string>
+    <string name="downloading_voice_files">Downloading voice files…</string>
+    <string name="extracting_voice_files">Extracting voice files…</string>
+    <string name="error_no_internet">No internet connection. Please check your connection and try again.</string>
+    <string name="error_download_failed">Failed to download voice files (HTTP %1$d). Please try again.</string>
+    <string name="error_extraction_failed">Failed to extract voice files. Please try again.</string>
+    <string name="error_latest_release">Could not find latest voice files. Please try again later.</string>
 </resources>

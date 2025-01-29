@@ -1,26 +1,33 @@
 package com.tibik.speechsynthesizer.ui
 
 import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.Fragment
-import com.google.android.flexbox.FlexboxLayout
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.tibik.speechsynthesizer.R
-import com.tibik.speechsynthesizer.lib.audio.AudioFile
-import com.tibik.speechsynthesizer.lib.audio.AudioFileParser
-import com.tibik.speechsynthesizer.lib.audio.AudioIdentifier
-import com.tibik.speechsynthesizer.lib.audio.AudioPlaybackViewModel
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.tibik.speechsynthesizer.R
+import com.tibik.speechsynthesizer.VoiceAssetManager
+import com.tibik.speechsynthesizer.lib.audio.AudioFile
+import com.tibik.speechsynthesizer.lib.audio.AudioIdentifier
+import com.tibik.speechsynthesizer.lib.audio.AudioPlaybackViewModel
+import kotlinx.coroutines.launch
 
 abstract class BaseSoundFragment : Fragment() {
     protected lateinit var viewModel: AudioPlaybackViewModel
     protected lateinit var buttonContainer: FlexboxLayout
+    protected lateinit var voiceManager: VoiceAssetManager
     protected val customSounds = mutableListOf<AudioFile>()
     
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        voiceManager = VoiceAssetManager(requireContext())
+    }
+
     protected val categoryIdToResId = mapOf(
         "numbers" to R.string.category_numbers,
         "stations" to R.string.category_stations,
@@ -58,21 +65,58 @@ abstract class BaseSoundFragment : Fragment() {
 
     protected fun setupAudioButtons(audioFiles: List<AudioFile>, showCustomOnly: Boolean = false) {
         buttonContainer.removeAllViews()
-        val categories = loadCategories()
-        val filteredFiles = audioFiles.filter { if (showCustomOnly) it.isCustom else !it.isCustom }
-        
-        if (filteredFiles.isEmpty()) {
-            // Show appropriate message when no sounds are available
-            val messageResId = if (showCustomOnly) {
-                R.string.no_custom_sounds
-            } else {
-                R.string.no_sounds_available
-            }
-            addMessage(getString(messageResId))
+
+        if (showCustomOnly) {
+            setupCustomSoundsUI(audioFiles)
             return
         }
 
-        val categorizedFiles = filteredFiles.groupBy { it.cat ?: "other" }
+        // Observe voice assets state
+        viewLifecycleOwner.lifecycleScope.launch {
+            voiceManager.downloadProgress.collect { state ->
+                buttonContainer.removeAllViews()
+                when (state) {
+                    is VoiceAssetManager.DownloadState.NotStarted -> {
+                        addDownloadButton()
+                    }
+                    is VoiceAssetManager.DownloadState.Checking -> {
+                        addMessage(getString(R.string.checking_voice_files))
+                    }
+                    is VoiceAssetManager.DownloadState.Downloading -> {
+                        addProgressIndicator(state.progress, getString(R.string.downloading_voice_files))
+                    }
+                    is VoiceAssetManager.DownloadState.Extracting -> {
+                        addProgressIndicator(state.progress, getString(R.string.extracting_voice_files))
+                    }
+                    is VoiceAssetManager.DownloadState.Completed -> {
+                        setupCategoriesUI(audioFiles)
+                    }
+                    is VoiceAssetManager.DownloadState.Error -> {
+                        addErrorMessage(state.message)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupCustomSoundsUI(audioFiles: List<AudioFile>) {
+        val filteredFiles = audioFiles.filter { it.isCustom }
+        if (filteredFiles.isEmpty()) {
+            addMessage(getString(R.string.no_custom_sounds))
+            return
+        }
+        setupCategoriesUI(filteredFiles)
+    }
+
+    private fun setupCategoriesUI(audioFiles: List<AudioFile>) {
+        val categories = loadCategories()
+        val categorizedFiles = audioFiles.filter { !it.isCustom }.groupBy { it.cat ?: "other" }
+        
+        if (categorizedFiles.isEmpty()) {
+            addMessage(getString(R.string.no_sounds_available))
+            return
+        }
+
         categories.forEach { category ->
             val filesForCategory = categorizedFiles[category.id] ?: emptyList()
             if (filesForCategory.isNotEmpty()) {
@@ -82,6 +126,84 @@ abstract class BaseSoundFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun addDownloadButton() {
+        val button = MaterialButton(requireContext()).apply {
+            text = getString(R.string.download_voice_files)
+            layoutParams = FlexboxLayout.LayoutParams(
+                FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                FlexboxLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(16, 16, 16, 16)
+            }
+            setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    voiceManager.ensureVoiceAssetsAvailable()
+                }
+            }
+        }
+        buttonContainer.addView(button)
+    }
+
+    private fun addProgressIndicator(progress: Float, message: String) {
+        val progressBar = android.widget.ProgressBar(requireContext(), null, android.R.attr.progressBarStyleHorizontal).apply {
+            layoutParams = FlexboxLayout.LayoutParams(
+                FlexboxLayout.LayoutParams.MATCH_PARENT,
+                FlexboxLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(32, 16, 32, 16)
+            }
+            max = 100
+            setProgress((progress * 100).toInt())
+        }
+        buttonContainer.addView(progressBar)
+        addMessage(message)
+    }
+
+    private fun addErrorMessage(message: String) {
+        // Error container with vertical layout
+        val container = android.widget.LinearLayout(requireContext()).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            layoutParams = FlexboxLayout.LayoutParams(
+                FlexboxLayout.LayoutParams.MATCH_PARENT,
+                FlexboxLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        // Error message
+        val errorView = TextView(requireContext()).apply {
+            text = message
+            setTextColor(resources.getColor(android.R.color.holo_red_dark, null))
+            textSize = 16f
+            gravity = Gravity.CENTER
+            setPadding(32, 16, 32, 16)
+            layoutParams = android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
+        container.addView(errorView)
+
+        // Retry button
+        val retryButton = MaterialButton(requireContext()).apply {
+            text = getString(R.string.retry_download)
+            layoutParams = android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = (16 * resources.displayMetrics.density).toInt()
+            }
+            setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    voiceManager.ensureVoiceAssetsAvailable()
+                }
+            }
+        }
+        container.addView(retryButton)
+
+        buttonContainer.addView(container)
     }
 
     private fun addMessage(message: String) {

@@ -29,6 +29,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            // Debug configuration if needed
+        }
+    }
+
+    // Allow zip files to be stored uncompressed
+    androidResources {
+        noCompress += "zip"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -55,7 +63,10 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDir("src/main/kotlin")
-            kotlin.srcDir("src/alt") // Adding your custom source directory for Kotlin files
+            kotlin.srcDir("src/alt")
+        }
+        getByName("debug") {
+            assets.srcDirs("src/debug/assets")
         }
     }
 }
