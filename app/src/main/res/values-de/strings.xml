@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sprachsynthesizer</string>
+    <string name="app_name">Soundboard</string>
     <string name="play">Abspielen</string>
     <string name="pause">Pause</string>
     <string name="drag_handle_description">Audioelement verschieben</string>
@@ -37,4 +37,9 @@
     <string name="error_download_failed">Fehler beim Herunterladen der Sprachdateien (HTTP %1$d). Bitte versuchen Sie es erneut.</string>
     <string name="error_extraction_failed">Fehler beim Entpacken der Sprachdateien. Bitte versuchen Sie es erneut.</string>
     <string name="error_latest_release">Neueste Sprachdateien konnten nicht gefunden werden. Bitte versuchen Sie es später erneut.</string>
+    <string name="privacy_policy">Datenschutzerklärung</string>
+    <string name="privacy_policy_cta">Zum Anzeigen tippen</string>
+    <string name="privacy_policy_loading">Datenschutzerklärung wird geladen…</string>
+    <string name="privacy_policy_error">Datenschutzerklärung konnte nicht geladen werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
+    <string name="app_description">Ein anpassbares Soundboard für Zugansagen und eigene Sounds</string>
 </resources>

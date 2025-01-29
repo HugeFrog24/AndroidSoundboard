@@ -115,10 +115,16 @@ class MainActivity : AppCompatActivity(), AudioUIManager.OnAudioQueueChangeListe
         // Set initial fragment if this is the first creation
         if (supportFragmentManager.fragments.isEmpty()) {
             replaceFragment(HomeFragment())
+        } else {
+            // Restore layout for current fragment after configuration change
+            val currentFragment = supportFragmentManager.fragments.firstOrNull()
+            if (currentFragment != null) {
+                updateLayoutForFragment(currentFragment)
+            }
         }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun updateLayoutForFragment(fragment: Fragment) {
         // Update UI based on fragment type
         val isSettingsFragment = fragment is SettingsFragment
         findViewById<View>(R.id.scrollViewAudioQueue).visibility = if (isSettingsFragment) View.GONE else View.VISIBLE
@@ -138,6 +144,11 @@ class MainActivity : AppCompatActivity(), AudioUIManager.OnAudioQueueChangeListe
             }
             layoutParams = params
         }
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        // Update layout for the new fragment
+        updateLayoutForFragment(fragment)
 
         // Replace fragment
         supportFragmentManager.beginTransaction()

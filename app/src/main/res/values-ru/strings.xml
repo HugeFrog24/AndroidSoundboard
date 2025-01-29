@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Синтезатор речи</string>
+    <string name="app_name">Синтезатор звуков</string>
     <string name="play">Восроизвести</string>
     <string name="pause">Пауза</string>
     <string name="drag_handle_description">Переместить аудиоэлемент</string>
@@ -37,4 +37,9 @@
     <string name="error_download_failed">Не удалось загрузить голосовые файлы (HTTP %1$d). Попробуйте снова.</string>
     <string name="error_extraction_failed">Не удалось распаковать голосовые файлы. Попробуйте снова.</string>
     <string name="error_latest_release">Не удалось найти последнюю версию голосовых файлов. Попробуйте позже.</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="privacy_policy_cta">Нажмите, чтобы посмотреть</string>
+    <string name="privacy_policy_loading">Загрузка политики конфиденциальности…</string>
+    <string name="privacy_policy_error">Не удалось загрузить политику конфиденциальности. Проверьте подключение к интернету и попробуйте снова.</string>
+    <string name="app_description">Настраиваемый звуковой пульт для железнодорожных объявлений и ваших собственных звуков</string>
 </resources>

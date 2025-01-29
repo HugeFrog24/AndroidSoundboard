@@ -110,7 +110,15 @@ abstract class BaseSoundFragment : Fragment() {
 
     private fun setupCategoriesUI(audioFiles: List<AudioFile>) {
         val categories = loadCategories()
-        val categorizedFiles = audioFiles.filter { !it.isCustom }.groupBy { it.cat ?: "other" }
+        // Filter based on whether we're showing custom sounds or main sounds
+        val filteredFiles = if (audioFiles.all { it.isCustom }) {
+            // In custom sounds view, show all files (they're already filtered in setupCustomSoundsUI)
+            audioFiles
+        } else {
+            // In main view, exclude custom sounds
+            audioFiles.filter { !it.isCustom }
+        }
+        val categorizedFiles = filteredFiles.groupBy { it.cat ?: "other" }
         
         if (categorizedFiles.isEmpty()) {
             addMessage(getString(R.string.no_sounds_available))

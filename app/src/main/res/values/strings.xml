@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Speech Synthesizer</string>
+    <string name="app_name">Soundboard</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="drag_handle_description">Move audio item</string>
@@ -37,4 +37,9 @@
     <string name="error_download_failed">Failed to download voice files (HTTP %1$d). Please try again.</string>
     <string name="error_extraction_failed">Failed to extract voice files. Please try again.</string>
     <string name="error_latest_release">Could not find latest voice files. Please try again later.</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_cta">Tap to view</string>
+    <string name="privacy_policy_loading">Loading privacy policy…</string>
+    <string name="privacy_policy_error">Failed to load privacy policy. Please check your internet connection and try again.</string>
+    <string name="app_description">A customizable soundboard for train announcements and your own sounds</string>
 </resources>

@@ -18,6 +18,7 @@ import com.tibik.speechsynthesizer.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.runtime.remember
@@ -35,13 +36,31 @@ class ChangelogManager(private val context: Context) {
     // Remove checkForNewVersion() and updateSavedVersionCode() methods
 
     fun shouldShowChangelog(): Boolean {
+        // Log last dismissed time for debugging
+        android.util.Log.d(
+            "ChangelogManager",
+            "Last changelog dismiss: ${
+                if (getLastDismissedTime() == 0L) "never"
+                else java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
+                    .format(java.util.Date(getLastDismissedTime()))
+            }"
+        )
         // Use a version-specific preference key
         return !prefs.getBoolean("dont_show_changelog_$currentVersionCode", false)
     }
 
     fun setDontShowChangelog(dontShow: Boolean) {
-        // Use a version-specific preference key
-        prefs.edit().putBoolean("dont_show_changelog_$currentVersionCode", dontShow).apply()
+        prefs.edit().apply {
+            // Use a version-specific preference key
+            putBoolean("dont_show_changelog_$currentVersionCode", dontShow)
+            // Record timestamp of when changelog was dismissed
+            putLong("changelog_last_dismissed_$currentVersionCode", System.currentTimeMillis())
+        }.apply()
+    }
+
+    // Get when changelog was last dismissed (used internally for logging)
+    private fun getLastDismissedTime(): Long {
+        return prefs.getLong("changelog_last_dismissed_$currentVersionCode", 0)
     }
 
     fun parseChangelog(): List<ChangelogItem> {
@@ -92,7 +111,11 @@ fun ChangelogDialog(
                 // **Group changelog items by version**
                 val groupedItems = changelogItems.groupBy { it.version }
 
-                LazyColumn {
+                LazyColumn(
+                    // Limit the changelog's height to prevent full-screen stretch while maintaining
+                    // scrollability and leaving room for the title, checkbox, and button
+                    modifier = Modifier.heightIn(max = 400.dp)
+                ) {
                     // **Iterate over each version group**
                     groupedItems.forEach { (version, items) ->
                         // **Display the version only once**
