@@ -8,4 +8,8 @@
         android:id="@+id/navigation_custom_sounds"
         android:icon="@drawable/speaker_outline"
         android:title="@string/nav_custom_sounds" />
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="@string/nav_settings" />
 </menu>

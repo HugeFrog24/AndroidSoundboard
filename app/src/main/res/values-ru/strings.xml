@@ -23,6 +23,18 @@
     <string name="dont_show_again">Больше не показывать</string>
     <string name="nav_home">Главная</string>
     <string name="nav_custom_sounds">Свои звуки</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="settings_title">Настройки</string>
     <string name="no_custom_sounds">Пока нет своих звуков.\nНажмите + вверху, чтобы добавить свои звуки.</string>
     <string name="no_sounds_available">В этой категории нет звуков.</string>
+    <string name="version_text">Версия %1$s</string>
+    <string name="download_voice_files">Скачать голосовые файлы</string>
+    <string name="retry_download">Повторить загрузку</string>
+    <string name="checking_voice_files">Проверка голосовых файлов…</string>
+    <string name="downloading_voice_files">Загрузка голосовых файлов…</string>
+    <string name="extracting_voice_files">Распаковка голосовых файлов…</string>
+    <string name="error_no_internet">Нет подключения к интернету. Проверьте подключение и попробуйте снова.</string>
+    <string name="error_download_failed">Не удалось загрузить голосовые файлы (HTTP %1$d). Попробуйте снова.</string>
+    <string name="error_extraction_failed">Не удалось распаковать голосовые файлы. Попробуйте снова.</string>
+    <string name="error_latest_release">Не удалось найти последнюю версию голосовых файлов. Попробуйте позже.</string>
 </resources>

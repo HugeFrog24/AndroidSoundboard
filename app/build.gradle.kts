@@ -12,8 +12,8 @@ android {
         applicationId = "com.tibik.speechsynthesizer"
         minSdk = 28
         targetSdk = 35
-        versionCode = 9
-        versionName = "1.3.3"
+        versionCode = 10
+        versionName = "1.3.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -49,6 +49,7 @@ android {
         compose = true
         viewBinding = true
         dataBinding = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.11"

@@ -29,6 +29,7 @@ import com.tibik.speechsynthesizer.lib.audio.AudioQueueManager
 import com.tibik.speechsynthesizer.ui.AudioUIManager
 import com.tibik.speechsynthesizer.ui.HomeFragment
 import com.tibik.speechsynthesizer.ui.CustomSoundsFragment
+import com.tibik.speechsynthesizer.ui.SettingsFragment
 import com.tibik.speechsynthesizer.lib.audio.AudioIdentifier
 import kotlinx.coroutines.launch
 
@@ -103,6 +104,10 @@ class MainActivity : AppCompatActivity(), AudioUIManager.OnAudioQueueChangeListe
                     replaceFragment(CustomSoundsFragment())
                     true
                 }
+                R.id.navigation_settings -> {
+                    replaceFragment(SettingsFragment())
+                    true
+                }
                 else -> false
             }
         }
@@ -114,6 +119,27 @@ class MainActivity : AppCompatActivity(), AudioUIManager.OnAudioQueueChangeListe
     }
 
     private fun replaceFragment(fragment: Fragment) {
+        // Update UI based on fragment type
+        val isSettingsFragment = fragment is SettingsFragment
+        findViewById<View>(R.id.scrollViewAudioQueue).visibility = if (isSettingsFragment) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.audioQueueContainer).visibility = if (isSettingsFragment) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.playButton).visibility = if (isSettingsFragment) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.clearQueueButton).visibility = if (isSettingsFragment) View.GONE else View.VISIBLE
+
+        // Update fragment container constraints
+        findViewById<View>(R.id.fragmentContainer).apply {
+            val params = layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+            if (isSettingsFragment) {
+                params.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+                params.topToBottom = -1 // Clear bottom constraint
+            } else {
+                params.topToTop = -1 // Clear top constraint
+                params.topToBottom = R.id.playButton // Normal position below controls
+            }
+            layoutParams = params
+        }
+
+        // Replace fragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
