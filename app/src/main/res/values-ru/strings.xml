@@ -42,4 +42,8 @@
     <string name="privacy_policy_loading">Загрузка политики конфиденциальности…</string>
     <string name="privacy_policy_error">Не удалось загрузить политику конфиденциальности. Проверьте подключение к интернету и попробуйте снова.</string>
     <string name="app_description">Настраиваемый звуковой пульт для железнодорожных объявлений и ваших собственных звуков</string>
+    <string name="language_settings">Язык</string>
+    <string name="language_english">Английский</string>
+    <string name="language_german">Немецкий</string>
+    <string name="language_russian">Русский</string>
 </resources>

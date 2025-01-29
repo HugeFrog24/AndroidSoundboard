@@ -5,30 +5,46 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.coroutines.Dispatchers
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.flexbox.FlexboxLayout
 import com.tibik.speechsynthesizer.R
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -152,6 +168,126 @@ class SettingsFragment : Fragment() {
                 ).apply {
                     setMargins(0, (8 * resources.displayMetrics.density).toInt(), 0, 0)
                 }
+            })
+
+            // Language selection section
+            addView(android.widget.LinearLayout(context).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                gravity = android.view.Gravity.CENTER
+                layoutParams = ViewGroup.MarginLayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, (24 * resources.displayMetrics.density).toInt(), 0, 0)
+                }
+
+                // Language selection title
+                addView(android.widget.TextView(context).apply {
+                    text = getString(R.string.language_settings)
+                    textSize = 16f
+                    gravity = android.view.Gravity.CENTER
+                    layoutParams = android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                })
+
+                // Language selection dropdown
+                addView(ComposeView(context).apply {
+                    layoutParams = android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        topMargin = (8 * resources.displayMetrics.density).toInt()
+                    }
+                    
+                    setContent {
+                        val context = LocalContext.current
+                        val dynamicColorScheme = if (isSystemInDarkTheme()) {
+                            dynamicDarkColorScheme(context)
+                        } else {
+                            dynamicLightColorScheme(context)
+                        }
+
+                        MaterialTheme(colorScheme = dynamicColorScheme) {
+                            var expanded by remember { mutableStateOf(false) }
+                            var selectedLanguage by remember {
+                                mutableStateOf(
+                                    when (AppCompatDelegate.getApplicationLocales().toLanguageTags()) {
+                                        "de" -> getString(R.string.language_german)
+                                        "ru" -> getString(R.string.language_russian)
+                                        else -> getString(R.string.language_english)
+                                    }
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier.wrapContentSize(Alignment.TopStart)
+                            ) {
+                                androidx.compose.material3.Surface(
+                                    onClick = { expanded = true },
+                                    shape = MaterialTheme.shapes.small,
+                                    border = BorderStroke(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.outline
+                                    ),
+                                    modifier = Modifier.padding(4.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                    ) {
+                                        Text(
+                                            text = selectedLanguage,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                        Icon(
+                                            Icons.Default.ArrowDropDown,
+                                            contentDescription = getString(R.string.language_settings)
+                                        )
+                                    }
+                                }
+
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            selectedLanguage = getString(R.string.language_english)
+                                            setAppLanguage("en")
+                                            expanded = false
+                                        },
+                                        text = {
+                                            Text(getString(R.string.language_english))
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            selectedLanguage = getString(R.string.language_german)
+                                            setAppLanguage("de")
+                                            expanded = false
+                                        },
+                                        text = {
+                                            Text(getString(R.string.language_german))
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            selectedLanguage = getString(R.string.language_russian)
+                                            setAppLanguage("ru")
+                                            expanded = false
+                                        },
+                                        text = {
+                                            Text(getString(R.string.language_russian))
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                })
             })
 
             // Privacy Policy section
@@ -440,5 +576,10 @@ class SettingsFragment : Fragment() {
 
         currentComposeView = composeView
         requireActivity().findViewById<ViewGroup>(android.R.id.content).addView(composeView)
+    }
+
+    private fun setAppLanguage(languageCode: String) {
+        val locales = LocaleListCompat.forLanguageTags(languageCode)
+        AppCompatDelegate.setApplicationLocales(locales)
     }
 }

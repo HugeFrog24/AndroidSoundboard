@@ -42,4 +42,8 @@
     <string name="privacy_policy_loading">Datenschutzerklärung wird geladen…</string>
     <string name="privacy_policy_error">Datenschutzerklärung konnte nicht geladen werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
     <string name="app_description">Ein anpassbares Soundboard für Zugansagen und eigene Sounds</string>
+    <string name="language_settings">Sprache</string>
+    <string name="language_english">Englisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_russian">Russisch</string>
 </resources>

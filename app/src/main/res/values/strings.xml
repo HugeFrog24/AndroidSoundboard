@@ -42,4 +42,8 @@
     <string name="privacy_policy_loading">Loading privacy policy…</string>
     <string name="privacy_policy_error">Failed to load privacy policy. Please check your internet connection and try again.</string>
     <string name="app_description">A customizable soundboard for train announcements and your own sounds</string>
+    <string name="language_settings">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_german">German</string>
+    <string name="language_russian">Russian</string>
 </resources>

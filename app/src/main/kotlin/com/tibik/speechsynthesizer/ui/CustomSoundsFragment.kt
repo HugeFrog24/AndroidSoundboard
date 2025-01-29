@@ -10,17 +10,24 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.tibik.speechsynthesizer.R
 import com.tibik.speechsynthesizer.lib.audio.AudioFile
 import com.tibik.speechsynthesizer.lib.audio.AudioFileParser
+import com.tibik.speechsynthesizer.lib.audio.AudioIdentifier
 import com.tibik.speechsynthesizer.lib.audio.AudioPlaybackViewModel
+import com.tibik.speechsynthesizer.ui.compose.screens.createCustomSoundsScreen
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import java.io.File
 
 class CustomSoundsFragment : BaseSoundFragment() {
     private val gson: Gson = GsonBuilder().create()
+    private val _audioFiles = MutableStateFlow<List<AudioFile>>(emptyList())
+    private val audioFiles: StateFlow<List<AudioFile>> = _audioFiles
 
     private val pickAudioFile = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -52,26 +59,29 @@ class CustomSoundsFragment : BaseSoundFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_custom_sounds, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
+    ): View {
         viewModel = ViewModelProvider(
             requireActivity(),
             AudioPlaybackViewModel.Factory(requireContext())
         )[AudioPlaybackViewModel::class.java]
-        
-        buttonContainer = view.findViewById(R.id.buttonContainer)
-        
-        view.findViewById<View>(R.id.addCustomSoundButton).setOnClickListener {
-            pickAudioFile.launch("audio/*")
-        }
 
         loadCustomSounds()
         updateAudioButtons()
+
+        return createCustomSoundsScreen(
+            audioFiles = audioFiles,
+            onAddCustomSoundClick = {
+                pickAudioFile.launch("audio/*")
+            },
+            onAudioItemClick = { audioFile ->
+                val audioIdentifier = if (audioFile.isCustom) {
+                    AudioIdentifier.FilePath(audioFile.filename)
+                } else {
+                    AudioIdentifier.AssetFilename("voice/${audioFile.filename}")
+                }
+                enqueueAudio(audioIdentifier)
+            }
+        )
     }
 
     private fun copyFileToInternalStorage(uri: Uri): String? {
@@ -128,9 +138,11 @@ class CustomSoundsFragment : BaseSoundFragment() {
     }
 
     private fun updateAudioButtons() {
-        val jsonString = loadJsonFromAssets("voice_files.json")
-        val audioFiles = AudioFileParser().parse(jsonString, customSounds)
-        setupAudioButtons(audioFiles, showCustomOnly = true)
+        lifecycleScope.launch {
+            val jsonString = loadJsonFromAssets("voice_files.json")
+            val files = AudioFileParser().parse(jsonString, customSounds)
+            _audioFiles.emit(files.filter { it.isCustom })
+        }
     }
 
     private fun showErrorMessage(message: String) {

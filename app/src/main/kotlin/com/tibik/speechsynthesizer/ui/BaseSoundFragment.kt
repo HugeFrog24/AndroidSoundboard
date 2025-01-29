@@ -2,7 +2,6 @@ package com.tibik.speechsynthesizer.ui
 
 import android.os.Bundle
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +14,8 @@ import com.tibik.speechsynthesizer.VoiceAssetManager
 import com.tibik.speechsynthesizer.lib.audio.AudioFile
 import com.tibik.speechsynthesizer.lib.audio.AudioIdentifier
 import com.tibik.speechsynthesizer.lib.audio.AudioPlaybackViewModel
+import com.tibik.speechsynthesizer.ui.compose.components.AudioButton
+import com.tibik.speechsynthesizer.ui.compose.createThemedComposeView
 import kotlinx.coroutines.launch
 
 abstract class BaseSoundFragment : Fragment() {
@@ -40,7 +41,7 @@ abstract class BaseSoundFragment : Fragment() {
         "custom" to R.string.category_custom
     )
 
-    protected data class Category(
+    data class Category(
         val id: String,
         var name: String
     )
@@ -244,12 +245,10 @@ abstract class BaseSoundFragment : Fragment() {
     }
 
     private fun addButtonForAudioFile(audioFile: AudioFile) {
-        LayoutInflater.from(requireContext())
-            .inflate(R.layout.audio_button, buttonContainer, false)
-            .also { view ->
-                val button = view as MaterialButton
-                button.text = audioFile.label
-                button.setOnClickListener {
+        val composeButton = requireContext().createThemedComposeView {
+            AudioButton(
+                text = audioFile.label,
+                onClick = {
                     val audioIdentifier = if (audioFile.isCustom) {
                         AudioIdentifier.FilePath(audioFile.filename)
                     } else {
@@ -257,11 +256,13 @@ abstract class BaseSoundFragment : Fragment() {
                     }
                     enqueueAudio(audioIdentifier)
                 }
-                buttonContainer.addView(button)
-            }
+            )
+        }
+        
+        buttonContainer.addView(composeButton)
     }
 
-    private fun enqueueAudio(audioIdentifier: AudioIdentifier) {
+    fun enqueueAudio(audioIdentifier: AudioIdentifier) {
         val currentQueue = viewModel.uiState.value.queue.toMutableList()
         currentQueue.add(audioIdentifier)
         viewModel.setQueue(currentQueue)
