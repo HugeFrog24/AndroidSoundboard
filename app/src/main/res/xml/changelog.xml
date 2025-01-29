@@ -2,21 +2,11 @@
 <changelog>
     <release version="1.3.5">
         <change>🔧 Fixed custom sounds not showing up in UI (they were being ghosted fr fr)</change>
-        <change>📱 Settings page no longer gets yeeted to the bottom after rotating screen</change>
-        <change>✨ Made changelog popup way less chonky (no more full screen stretch)</change>
-    </release>
-    <release version="1.3.4">
-        <change>📱 New bottom navigation with dedicated custom sounds section</change>
+        <change>📱 New bottom navigation</change>
         <change>🌐 Updated translations</change>
         <change>👆 Swipe to remove items from the queue</change>
         <change>🐸 App did Magerquark diet, lost some weight (voice files download on demand)</change>
-        <change>⚙️ Settings page coming soon!</change>
-    </release>
-        <release version="1.3.4">
-        <change>📱 New bottom navigation with dedicated custom sounds section</change>
-        <change>🌐 Updated translations</change>
-        <change>👆 Swipe to remove items from the queue</change>
-        <change>🐸 App did Magerquark diet, lost some weight (voice files download on demand)</change>
-        <change>⚙️ Settings page coming soon!</change>
+        <change>⚙️ New Settings page</change>
+        <change>🛡️ Linked Privacy Policy as required by Google Play Store</change>
     </release>
 </changelog>

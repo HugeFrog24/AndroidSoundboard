@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.coroutines.Dispatchers
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -32,12 +33,61 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SettingsFragment : Fragment() {
+    private sealed class DialogState {
+        data object None : DialogState()
+        data object Loading : DialogState()
+        data object Error : DialogState()
+        data class PrivacyPolicy(val content: String) : DialogState()
+    }
+    
+    private var currentDialog: DialogState = DialogState.None
+    private var currentComposeView: ComposeView? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        savedInstanceState?.let { bundle ->
+            val dialogType = bundle.getString("currentDialogType")
+            currentDialog = when (dialogType) {
+                "loading" -> DialogState.Loading
+                "error" -> DialogState.Error
+                "privacy_policy" -> {
+                    val content = bundle.getString("privacyPolicyContent") ?: ""
+                    DialogState.PrivacyPolicy(content)
+                }
+                else -> DialogState.None
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val dialogType = when (currentDialog) {
+            is DialogState.Loading -> "loading"
+            is DialogState.Error -> "error"
+            is DialogState.PrivacyPolicy -> "privacy_policy"
+            else -> "none"
+        }
+        outState.putString("currentDialogType", dialogType)
+        if (currentDialog is DialogState.PrivacyPolicy) {
+            outState.putString("privacyPolicyContent", (currentDialog as DialogState.PrivacyPolicy).content)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        currentComposeView?.let { composeView ->
+            (composeView.parent as? ViewGroup)?.removeView(composeView)
+        }
+        currentComposeView = null
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return FlexboxLayout(requireContext()).apply {
+        val view = FlexboxLayout(requireContext()).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -152,6 +202,16 @@ class SettingsFragment : Fragment() {
                 }
             })
         }
+
+        // Restore dialog state if needed
+        when (currentDialog) {
+            is DialogState.Loading -> showLoadingDialog()
+            is DialogState.Error -> showErrorDialog()
+            is DialogState.PrivacyPolicy -> showPrivacyPolicyDialog()
+            else -> { /* No dialog to show */ }
+        }
+
+        return view
     }
 
     private fun fetchPrivacyPolicy() {
@@ -164,6 +224,50 @@ class SettingsFragment : Fragment() {
         }
 
         // For Android S and above, use Compose dialog
+        currentDialog = DialogState.Loading
+        showLoadingDialog()
+
+        lifecycleScope.launch {
+            try {
+                val url = "https://raw.githubusercontent.com/HugeFrog24/soundboard-privpol/main/README.md"
+                withContext(Dispatchers.IO) {
+                    val connection = java.net.URL(url).openConnection() as java.net.HttpURLConnection
+                    connection.requestMethod = "GET"
+                    connection.connectTimeout = 5000
+                    connection.readTimeout = 5000
+                    
+                    val content = connection.inputStream.bufferedReader().use { it.readText() }
+                    withContext(Dispatchers.Main) {
+                        currentDialog = DialogState.None
+                        currentComposeView?.let { composeView ->
+                            (composeView.parent as? ViewGroup)?.removeView(composeView)
+                            currentComposeView = null
+                        }
+                        currentDialog = DialogState.PrivacyPolicy(content)
+                        showPrivacyPolicyDialog()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    currentDialog = DialogState.None
+                    currentComposeView?.let { composeView ->
+                        (composeView.parent as? ViewGroup)?.removeView(composeView)
+                        currentComposeView = null
+                    }
+                    currentDialog = DialogState.Error
+                    showErrorDialog()
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun showLoadingDialog() {
+        // Clean up any existing dialog
+        currentComposeView?.let { composeView ->
+            (composeView.parent as? ViewGroup)?.removeView(composeView)
+        }
+
         val loadingComposeView = ComposeView(requireContext()).apply {
             setContent {
                 val context = LocalContext.current
@@ -208,76 +312,18 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        currentComposeView = loadingComposeView
         requireActivity().findViewById<ViewGroup>(android.R.id.content).addView(loadingComposeView)
-
-        lifecycleScope.launch {
-            try {
-                val url = "https://raw.githubusercontent.com/HugeFrog24/soundboard-privpol/main/README.md"
-                withContext(kotlinx.coroutines.Dispatchers.IO) {
-                    val connection = java.net.URL(url).openConnection() as java.net.HttpURLConnection
-                    connection.requestMethod = "GET"
-                    connection.connectTimeout = 5000
-                    connection.readTimeout = 5000
-                    
-                    val content = connection.inputStream.bufferedReader().use { it.readText() }
-                    withContext(kotlinx.coroutines.Dispatchers.Main) {
-                        requireActivity().findViewById<ViewGroup>(android.R.id.content).removeView(loadingComposeView)
-                        showPrivacyPolicyDialog(content)
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    requireActivity().findViewById<ViewGroup>(android.R.id.content).removeView(loadingComposeView)
-                    val errorComposeView = ComposeView(requireContext()).apply {
-                        setContent {
-                            val context = LocalContext.current
-                            val dynamicColorScheme = if (isSystemInDarkTheme()) {
-                                dynamicDarkColorScheme(context)
-                            } else {
-                                dynamicLightColorScheme(context)
-                            }
-
-                            MaterialTheme(colorScheme = dynamicColorScheme) {
-                                AlertDialog(
-                                    onDismissRequest = { requireActivity().findViewById<ViewGroup>(android.R.id.content).removeView(this) },
-                                    title = {
-                                        Text(
-                                            text = getString(R.string.privacy_policy),
-                                            style = MaterialTheme.typography.titleLarge
-                                        )
-                                    },
-                                    text = {
-                                        Text(
-                                            text = getString(R.string.privacy_policy_error),
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    },
-                                    confirmButton = {
-                                        TextButton(
-                                            onClick = { requireActivity().findViewById<ViewGroup>(android.R.id.content).removeView(this@apply) }
-                                        ) {
-                                            Text(
-                                                text = getString(R.string.ok),
-                                                style = MaterialTheme.typography.labelLarge
-                                            )
-                                        }
-                                    },
-                                    containerColor = MaterialTheme.colorScheme.surface,
-                                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                                    textContentColor = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
-                    }
-                    requireActivity().findViewById<ViewGroup>(android.R.id.content).addView(errorComposeView)
-                }
-            }
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun showPrivacyPolicyDialog(content: String) {
-        val composeView = ComposeView(requireContext()).apply {
+    private fun showErrorDialog() {
+        // Clean up any existing dialog
+        currentComposeView?.let { composeView ->
+            (composeView.parent as? ViewGroup)?.removeView(composeView)
+        }
+
+        val errorComposeView = ComposeView(requireContext()).apply {
             setContent {
                 val context = LocalContext.current
                 val dynamicColorScheme = if (isSystemInDarkTheme()) {
@@ -288,7 +334,7 @@ class SettingsFragment : Fragment() {
 
                 MaterialTheme(colorScheme = dynamicColorScheme) {
                     AlertDialog(
-                        onDismissRequest = { (parent as? ViewGroup)?.removeView(this) },
+                        onDismissRequest = { currentDialog = DialogState.None },
                         title = {
                             Text(
                                 text = getString(R.string.privacy_policy),
@@ -296,23 +342,18 @@ class SettingsFragment : Fragment() {
                             )
                         },
                         text = {
-                            Column {
-                                LazyColumn(
-                                    modifier = Modifier.heightIn(max = 400.dp)
-                                ) {
-                                    item {
-                                        Text(
-                                            text = content,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            modifier = Modifier.padding(bottom = 4.dp)
-                                        )
-                                    }
-                                }
-                            }
+                            Text(
+                                text = getString(R.string.privacy_policy_error),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         },
                         confirmButton = {
                             TextButton(
-                                onClick = { (parent as? ViewGroup)?.removeView(this@apply) }
+                                onClick = {
+                                    currentDialog = DialogState.None
+                                    currentComposeView = null
+                                    (parent as? ViewGroup)?.removeView(this@apply)
+                                }
                             ) {
                                 Text(
                                     text = getString(R.string.ok),
@@ -328,6 +369,76 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        currentComposeView = errorComposeView
+        requireActivity().findViewById<ViewGroup>(android.R.id.content).addView(errorComposeView)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun showPrivacyPolicyDialog() {
+        // Clean up any existing dialog
+        currentComposeView?.let { composeView ->
+            (composeView.parent as? ViewGroup)?.removeView(composeView)
+        }
+
+        val composeView = ComposeView(requireContext()).apply {
+            setContent {
+                val context = LocalContext.current
+                val dynamicColorScheme = if (isSystemInDarkTheme()) {
+                    dynamicDarkColorScheme(context)
+                } else {
+                    dynamicLightColorScheme(context)
+                }
+
+                MaterialTheme(colorScheme = dynamicColorScheme) {
+                    if (currentDialog is DialogState.PrivacyPolicy) {
+                        AlertDialog(
+                            onDismissRequest = { currentDialog = DialogState.None },
+                            title = {
+                                Text(
+                                    text = getString(R.string.privacy_policy),
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+                            },
+                            text = {
+                                Column {
+                                    LazyColumn(
+                                        modifier = Modifier.heightIn(max = 400.dp)
+                                    ) {
+                                        item {
+                                            val dialogState = currentDialog as DialogState.PrivacyPolicy
+                                            Text(
+                                                text = dialogState.content,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                modifier = Modifier.padding(bottom = 4.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        currentDialog = DialogState.None
+                                        currentComposeView = null
+                                        (parent as? ViewGroup)?.removeView(this@apply)
+                                    }
+                                ) {
+                                    Text(
+                                        text = getString(R.string.ok),
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+                            },
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            titleContentColor = MaterialTheme.colorScheme.onSurface,
+                            textContentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+        }
+
+        currentComposeView = composeView
         requireActivity().findViewById<ViewGroup>(android.R.id.content).addView(composeView)
     }
 }
