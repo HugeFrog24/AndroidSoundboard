@@ -159,10 +159,12 @@ class VoiceAssetManager(private val context: Context) {
             var hasVoiceDir = false
             var hasCategoriesJson = false
             var hasVoiceFilesJson = false
+            val entries = mutableListOf<String>()
 
             ZipInputStream(zipFile.inputStream()).use { zip ->
                 var entry = zip.nextEntry
                 while (entry != null) {
+                    entries.add(entry.name)
                     when {
                         entry.name.startsWith("metadata/") -> hasMetadataDir = true
                         entry.name.startsWith("voice/") -> hasVoiceDir = true
@@ -173,7 +175,24 @@ class VoiceAssetManager(private val context: Context) {
                 }
             }
 
-            hasMetadataDir && hasVoiceDir && hasCategoriesJson && hasVoiceFilesJson
+            // Log detailed verification results
+            Log.d(TAG, "Zip contents verification:")
+            Log.d(TAG, "- Has metadata directory: $hasMetadataDir")
+            Log.d(TAG, "- Has voice directory: $hasVoiceDir")
+            Log.d(TAG, "- Has categories.json: $hasCategoriesJson")
+            Log.d(TAG, "- Has voice_files.json: $hasVoiceFilesJson")
+            Log.d(TAG, "Found entries: ${entries.joinToString("\n  ", "\n  ")}")
+
+            val isValid = hasMetadataDir && hasVoiceDir && hasCategoriesJson && hasVoiceFilesJson
+            if (!isValid) {
+                Log.e(TAG, "Missing required files/directories:")
+                if (!hasMetadataDir) Log.e(TAG, "- metadata/ directory")
+                if (!hasVoiceDir) Log.e(TAG, "- voice/ directory")
+                if (!hasCategoriesJson) Log.e(TAG, "- metadata/categories.json")
+                if (!hasVoiceFilesJson) Log.e(TAG, "- metadata/voice_files.json")
+            }
+
+            isValid
         } catch (e: Exception) {
             Log.e(TAG, "Failed to verify zip contents: ${e.message}")
             false
@@ -362,17 +381,27 @@ class VoiceAssetManager(private val context: Context) {
             // Create metadata directory if it doesn't exist
             metadataDir.mkdirs()
 
-            // Download and parse categories.json
-            val categoriesFile = File(metadataDir, CATEGORIES_JSON)
-            val categories = downloadFile("$downloadUrl/$CATEGORIES_JSON", categoriesFile)?.let { file ->
-                parseCategories(file.readText())
-            } ?: return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            // Download the zip file first
+            if (!downloadAndExtractVoiceAssets()) {
+                return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            }
 
-            // Download and parse voice_files.json
+            // Now read the extracted JSON files
+            val categoriesFile = File(metadataDir, CATEGORIES_JSON)
+            val categories = if (categoriesFile.exists()) {
+                parseCategories(categoriesFile.readText())
+            } else {
+                Log.e(TAG, "categories.json not found in extracted files")
+                return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            }
+
             val voiceFilesFile = File(metadataDir, VOICE_FILES_JSON)
-            val voiceFiles = downloadFile("$downloadUrl/$VOICE_FILES_JSON", voiceFilesFile)?.let { file ->
-                parseVoiceFiles(file.readText())
-            } ?: return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            val voiceFiles = if (voiceFilesFile.exists()) {
+                parseVoiceFiles(voiceFilesFile.readText())
+            } else {
+                Log.e(TAG, "voice_files.json not found in extracted files")
+                return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            }
 
             MetadataFiles(categories, voiceFiles).also {
                 cachedMetadata = it
