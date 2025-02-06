@@ -374,7 +374,7 @@ class VoiceAssetManager(private val context: Context) {
             }
 
             // Get latest release URL
-            val downloadUrl = getLatestReleaseUrl() ?: return@withContext loadMetadataFromDisk()?.also {
+            getLatestReleaseUrl() ?: return@withContext loadMetadataFromDisk()?.also {
                 _metadataState.value = MetadataState.Loaded(MetadataState.Source.CACHE)
             }
 
@@ -415,39 +415,6 @@ class VoiceAssetManager(private val context: Context) {
             loadMetadataFromDisk()?.also {
                 _metadataState.value = MetadataState.Loaded(MetadataState.Source.CACHE)
             }
-        }
-    }
-
-    private suspend fun downloadFile(url: String, outputFile: File): File? = withContext(Dispatchers.IO) {
-        try {
-            val connection = URL(url).openConnection() as java.net.HttpURLConnection
-            connection.setRequestProperty("Accept", "application/json")
-            
-            try {
-                when (connection.responseCode) {
-                    java.net.HttpURLConnection.HTTP_OK -> {
-                        connection.inputStream.use { input ->
-                            FileOutputStream(outputFile).use { output ->
-                                input.copyTo(output)
-                            }
-                        }
-                        return@withContext outputFile
-                    }
-                    java.net.HttpURLConnection.HTTP_NOT_FOUND -> {
-                        Log.e(TAG, "File not found: $url")
-                        null
-                    }
-                    else -> {
-                        Log.e(TAG, "Download failed with status code: ${connection.responseCode}")
-                        null
-                    }
-                }
-            } finally {
-                connection.disconnect()
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to download file: ${e.message}")
-            null
         }
     }
 
