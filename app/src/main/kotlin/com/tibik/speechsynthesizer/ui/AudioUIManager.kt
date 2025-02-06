@@ -103,6 +103,14 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
             }
         }
 
+        fun onItemSwiped(position: Int) {
+            val currentList = currentList.toMutableList()
+            currentList.removeAt(position)
+            submitList(currentList) {
+                audioQueueChangeListener?.onAudioQueueChanged(currentList)
+            }
+        }
+
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val audioItemView: TextView = itemView.findViewById(R.id.audioItemTextView)
             private val removeButton: MaterialButton = itemView.findViewById(R.id.removeAudioItemButton)
@@ -136,7 +144,8 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
     private class ItemTouchCallback(private val adapter: AudioItemAdapter) : ItemTouchHelper.Callback() {
         override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
             val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
-            return makeMovementFlags(dragFlags, 0)
+            val swipeFlags = ItemTouchHelper.START or ItemTouchHelper.END
+            return makeMovementFlags(dragFlags, swipeFlags)
         }
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
@@ -145,7 +154,10 @@ class AudioUIManager(private val context: Context, private val audioQueueFlexbox
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            // Not used in this implementation
+            val position = viewHolder.bindingAdapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                adapter.onItemSwiped(position)
+            }
         }
     }
 

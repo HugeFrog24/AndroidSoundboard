@@ -18,6 +18,7 @@ import com.tibik.speechsynthesizer.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.runtime.remember
@@ -35,13 +36,31 @@ class ChangelogManager(private val context: Context) {
     // Remove checkForNewVersion() and updateSavedVersionCode() methods
 
     fun shouldShowChangelog(): Boolean {
+        // Log last dismissed time for debugging
+        android.util.Log.d(
+            "ChangelogManager",
+            "Last changelog dismiss: ${
+                if (getLastDismissedTime() == 0L) "never"
+                else java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
+                    .format(java.util.Date(getLastDismissedTime()))
+            }"
+        )
         // Use a version-specific preference key
         return !prefs.getBoolean("dont_show_changelog_$currentVersionCode", false)
     }
 
     fun setDontShowChangelog(dontShow: Boolean) {
-        // Use a version-specific preference key
-        prefs.edit().putBoolean("dont_show_changelog_$currentVersionCode", dontShow).apply()
+        prefs.edit().apply {
+            // Use a version-specific preference key
+            putBoolean("dont_show_changelog_$currentVersionCode", dontShow)
+            // Record timestamp of when changelog was dismissed
+            putLong("changelog_last_dismissed_$currentVersionCode", System.currentTimeMillis())
+        }.apply()
+    }
+
+    // Get when changelog was last dismissed (used internally for logging)
+    private fun getLastDismissedTime(): Long {
+        return prefs.getLong("changelog_last_dismissed_$currentVersionCode", 0)
     }
 
     fun parseChangelog(): List<ChangelogItem> {
@@ -49,15 +68,26 @@ class ChangelogManager(private val context: Context) {
         val changelogItems = mutableListOf<ChangelogItem>()
         var currentVersion = ""
         var eventType = parser.eventType
+        val currentLocale = context.resources.configuration.locales[0].language
 
         while (eventType != XmlPullParser.END_DOCUMENT) {
             when (eventType) {
                 XmlPullParser.START_TAG -> {
                     when (parser.name) {
                         "release" -> currentVersion = parser.getAttributeValue(null, "version")
-                        "change" -> {
-                            val change = parser.nextText()
-                            changelogItems.add(ChangelogItem(currentVersion, change))
+                        "en", "de", "ru" -> {
+                            // If it's the user's language or English (as fallback)
+                            if (parser.name == currentLocale || (parser.name == "en" && currentLocale !in listOf("de", "ru"))) {
+                                val changes = parser.nextText()
+                                    .split("\n")
+                                    .map { it.trim() }
+                                    .filter { it.isNotEmpty() }
+                                    .map { it.removePrefix("* ").trim() }
+                                
+                                changes.forEach { change ->
+                                    changelogItems.add(ChangelogItem(currentVersion, change))
+                                }
+                            }
                         }
                     }
                 }
@@ -92,7 +122,13 @@ fun ChangelogDialog(
                 // **Group changelog items by version**
                 val groupedItems = changelogItems.groupBy { it.version }
 
-                LazyColumn {
+                LazyColumn(
+                    // Limit the changelog's height to prevent full-screen stretch while maintaining
+                    // scrollability and leaving room for the title, checkbox, and button
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .heightIn(max = 400.dp)
+                ) {
                     // **Iterate over each version group**
                     groupedItems.forEach { (version, items) ->
                         // **Display the version only once**

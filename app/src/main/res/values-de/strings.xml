@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sprachsynthesizer</string>
+    <string name="app_name">Soundboard</string>
     <string name="play">Abspielen</string>
     <string name="pause">Pause</string>
     <string name="drag_handle_description">Audioelement verschieben</string>
@@ -20,4 +21,31 @@
     <string name="ok">OK</string>
     <string name="play_audio">Audio abspielen</string>
     <string name="dont_show_again">Nicht mehr anzeigen</string>
+    <string name="nav_home">Start</string>
+    <string name="nav_custom_sounds">Eigene Sounds</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="no_custom_sounds">Noch keine eigenen Sounds.\nTippen Sie oben auf +, um eigene Sounds hinzuzufügen.</string>
+    <string name="no_sounds_available">Keine Sounds in dieser Kategorie verfügbar.</string>
+    <string name="version_text">Version %1$s</string>
+    <string name="download_voice_files">Sprachdateien herunterladen</string>
+    <string name="retry_download">Erneut versuchen</string>
+    <string name="checking_voice_files">Überprüfe Sprachdateien...</string>
+    <string name="downloading_voice_files">Lade Sprachdateien herunter...</string>
+    <string name="extracting_voice_files">Entpacke Sprachdateien...</string>
+    <string name="error_no_internet">Keine Internetverbindung. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.</string>
+    <string name="error_download_failed">Fehler beim Herunterladen der Sprachdateien (HTTP %1$d). Bitte versuchen Sie es erneut.</string>
+    <string name="error_extraction_failed">Fehler beim Entpacken der Sprachdateien. Bitte versuchen Sie es erneut.</string>
+    <string name="error_latest_release">Neueste Sprachdateien konnten nicht gefunden werden. Bitte versuchen Sie es später erneut.</string>
+    <string name="error_invalid_zip">Ungültiges Sprachdateipaket: Erforderliche Dateien fehlen.</string>
+    <string name="error_loading_categories">Fehler beim Laden der Soundkategorien. Bitte versuchen Sie es erneut.</string>
+    <string name="privacy_policy">Datenschutzerklärung</string>
+    <string name="privacy_policy_cta">Zum Anzeigen tippen</string>
+    <string name="privacy_policy_loading">Datenschutzerklärung wird geladen...</string>
+    <string name="privacy_policy_error">Datenschutzerklärung konnte nicht geladen werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
+    <string name="app_description">Ein anpassbares Soundboard für Zugansagen und eigene Sounds</string>
+    <string name="language_settings">Sprache</string>
+    <string name="language_english">Englisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_russian">Russisch</string>
 </resources>

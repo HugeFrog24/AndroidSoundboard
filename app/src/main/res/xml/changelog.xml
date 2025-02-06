@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="1.3.3">
-        <change>🛠️ Implemented drag-and-drop for audio queue items</change>
-        <change>🆕 Added "What's New" dialog to show changelog</change>
-        <change>⚡ Improved performance and minor UI tweaks</change>
-        <change>🌐 Updated translations</change>
+    <release version="1.3.7">
+        <en>
+            * ☁️ Moved voice files to the cloud fr fr, app be lighter than ever
+            * 🔄 If internet be trippin it still works offline sheesh
+            * 🔥 Firebase back in da house no cap (no idea how it got yoinked fr)
+            * 🌎 Changelog now multilingual
+        </en>
+        <de>
+            * ☁️ Sounddateien in die Cloud verschoben digga, App ist jetzt leichter als je zuvor
+            * 🔄 Läuft auch offline weiter wenn kein Internet da ist sheesh
+            * 🔥 Firebase wieder am Start (keine Ahnung wer das rausgenommen hat eh)
+            * 🌎 Changelog jetzt international
+        </de>
+        <ru>
+            * ☁️ Звуковые файлы теперь в облаке братан, приложение стало легче
+            * 🔄 Работает даже без интернета четко
+            * 🔥 Firebase снова в деле (как его вообще потеряли, реально)
+            * 🌎 Список изменений теперь международный
+        </ru>
     </release>
 </changelog>

@@ -1,0 +1,934 @@
+[
+    {
+        "filename": "0.wav",
+        "label": "0",
+        "internal": "0",
+        "cat": "numbers"
+    },
+    {
+        "filename": "1.wav",
+        "label": "1",
+        "internal": "1",
+        "cat": "numbers"
+    },
+    {
+        "filename": "10.wav",
+        "label": "10",
+        "internal": "10",
+        "cat": "numbers"
+    },
+    {
+        "filename": "10_2.wav",
+        "label": "10_2",
+        "internal": "10 v2",
+        "cat": "numbers"
+    },
+    {
+        "filename": "11.wav",
+        "label": "11",
+        "internal": "11",
+        "cat": "numbers"
+    },
+    {
+        "filename": "12.wav",
+        "label": "12",
+        "internal": "12",
+        "cat": "numbers"
+    },
+    {
+        "filename": "2.wav",
+        "label": "2",
+        "internal": "2",
+        "cat": "numbers"
+    },
+    {
+        "filename": "20.wav",
+        "label": "20",
+        "internal": "20",
+        "cat": "numbers"
+    },
+    {
+        "filename": "3.wav",
+        "label": "3",
+        "internal": "3",
+        "cat": "numbers"
+    },
+    {
+        "filename": "30.wav",
+        "label": "30",
+        "internal": "30",
+        "cat": "numbers"
+    },
+    {
+        "filename": "4.wav",
+        "label": "4",
+        "internal": "4",
+        "cat": "numbers"
+    },
+    {
+        "filename": "40.wav",
+        "label": "40",
+        "internal": "40",
+        "cat": "numbers"
+    },
+    {
+        "filename": "5.wav",
+        "label": "5",
+        "internal": "5",
+        "cat": "numbers"
+    },
+    {
+        "filename": "50.wav",
+        "label": "50",
+        "internal": "50",
+        "cat": "numbers"
+    },
+    {
+        "filename": "6.wav",
+        "label": "6",
+        "internal": "6",
+        "cat": "numbers"
+    },
+    {
+        "filename": "60.wav",
+        "label": "60",
+        "internal": "60",
+        "cat": "numbers"
+    },
+    {
+        "filename": "7.wav",
+        "label": "7",
+        "internal": "7",
+        "cat": "numbers"
+    },
+    {
+        "filename": "70.wav",
+        "label": "70",
+        "internal": "70",
+        "cat": "numbers"
+    },
+    {
+        "filename": "8.wav",
+        "label": "8",
+        "internal": "8",
+        "cat": "numbers"
+    },
+    {
+        "filename": "80.wav",
+        "label": "80",
+        "internal": "80",
+        "cat": "numbers"
+    },
+    {
+        "filename": "9.wav",
+        "label": "9",
+        "internal": "9",
+        "cat": "numbers"
+    },
+    {
+        "filename": "90.wav",
+        "label": "90",
+        "internal": "90",
+        "cat": "numbers"
+    },
+    {
+        "filename": "abbiegen.wav",
+        "label": "abbiegen",
+        "internal": "abbiegen",
+        "cat": "directions"
+    },
+    {
+        "filename": "Abfahrt.wav",
+        "label": "Abfahrt",
+        "internal": "Abfahrt"
+    },
+    {
+        "filename": "AchtUnd.wav",
+        "label": "Acht und",
+        "internal": "Achtund",
+        "cat": "numbers"
+    },
+    {
+        "filename": "ACrazyFrogDay.wav",
+        "label": "A Crazy Frog Day",
+        "internal": "Acrazyfrogday"
+    },
+    {
+        "filename": "Aenderung.wav",
+        "label": "Aenderung",
+        "internal": "Aenderung"
+    },
+    {
+        "filename": "AlleeCenter.wav",
+        "label": "Allee-Center",
+        "internal": "Alleecenter",
+        "cat": "stations"
+    },
+    {
+        "filename": "AmBruchsee.wav",
+        "label": "Am Bruchsee",
+        "internal": "Ambruchsee",
+        "cat": "stations"
+    },
+    {
+        "filename": "AmNeustadtCenter.wav",
+        "label": "Am Neustadt-Center",
+        "internal": "Amneustadtcenter",
+        "cat": "stations"
+    },
+    {
+        "filename": "AnDerMagistrale.wav",
+        "label": "An der Magistrale",
+        "internal": "Andermagistrale",
+        "cat": "stations"
+    },
+    {
+        "filename": "Ankunft.wav",
+        "label": "Ankunft",
+        "internal": "Ankunft"
+    },
+    {
+        "filename": "Augenblick.wav",
+        "label": "Augenblick",
+        "internal": "Augenblick"
+    },
+    {
+        "filename": "AusstiegInFahrtRichtung.wav",
+        "label": "Ausstieg in Fahrtrichtung",
+        "internal": "Ausstieginfahrtrichtung"
+    },
+    {
+        "filename": "BadLausick.wav",
+        "label": "Bad Lausick",
+        "internal": "Badlausick",
+        "cat": "stations"
+    },
+    {
+        "filename": "Berichtigung.wav",
+        "label": "Berichtigung",
+        "internal": "Berichtigung"
+    },
+    {
+        "filename": "Berlin.wav",
+        "label": "Berlin",
+        "internal": "Berlin",
+        "cat": "stations"
+    },
+    {
+        "filename": "BitteAlleAussteigen.wav",
+        "label": "Bitte alle aussteigen",
+        "internal": "Bittealleaussteigen"
+    },
+    {
+        "filename": "BitteAlleEinsteigen.wav",
+        "label": "Bitte alle einsteigen",
+        "internal": "Bittealleeinsteigen"
+    },
+    {
+        "filename": "BitteAussteigen.wav",
+        "label": "Bitte aussteigen",
+        "internal": "Bitteaussteigen"
+    },
+    {
+        "filename": "BitteEinsteigen.wav",
+        "label": "Bitte einsteigen",
+        "internal": "Bitteeinsteigen"
+    },
+    {
+        "filename": "BitteVersuchenSieEsSpaeterErneut.wav",
+        "label": "Bitte versuchen Sie es später erneut",
+        "internal": "Bitteversuchensieesspaetererneut"
+    },
+    {
+        "filename": "BitteVersuchenSieEsSpaeterErneut_2.wav",
+        "label": "Bitte versuchen Sie es später erneut v2",
+        "internal": "Bitteversuchensieesspaetererneut2"
+    },
+    {
+        "filename": "BitteWenden.wav",
+        "label": "Bitte wenden",
+        "internal": "Bittewenden"
+    },
+    {
+        "filename": "Bremen.wav",
+        "label": "Bremen",
+        "internal": "Bremen",
+        "cat": "Stations"
+    },
+    {
+        "filename": "ChemnitzHbf.wav",
+        "label": "Chemnitz Hbf",
+        "internal": "Chemnitzhbf",
+        "cat": "Stations"
+    },
+    {
+        "filename": "DasRauchenAmBahnhof.wav",
+        "label": "Das Rauchen am Bahnhof...",
+        "internal": "Dasrauchenambahnhof"
+    },
+    {
+        "filename": "DessauerBruecke.wav",
+        "label": "Dessauer Brücke",
+        "internal": "Dessauerbruecke",
+        "cat": "Stations"
+    },
+    {
+        "filename": "DieseReiseEndetHier.wav",
+        "label": "Diese Reise endet hier",
+        "internal": "Diesereiseendethier"
+    },
+    {
+        "filename": "DieTuerenSchliessen.wav",
+        "label": "Die TürenSchliessen",
+        "internal": "Dietuerenschliessen"
+    },
+    {
+        "filename": "DieTuereSchliesst.wav",
+        "label": "DieTüreSchliesst",
+        "internal": "Dietuereschliesst"
+    },
+    {
+        "filename": "DreiUnd.wav",
+        "label": "DreiUnd",
+        "internal": "Dreiund",
+        "cat": "numbers"
+    },
+    {
+        "filename": "ein.wav",
+        "label": "ein",
+        "internal": "Ein",
+        "cat": "numbers"
+    },
+    {
+        "filename": "Einfahrt.wav",
+        "label": "Einfahrt",
+        "internal": "Einfahrt"
+    },
+    {
+        "filename": "einig.wav",
+        "label": "einig",
+        "internal": "Einig"
+    },
+    {
+        "filename": "einige.wav",
+        "label": "einige",
+        "internal": "Einige"
+    },
+    {
+        "filename": "Einund.wav",
+        "label": "Einund",
+        "internal": "Einund",
+        "cat": "numbers"
+    },
+    {
+        "filename": "EsBleibtHierAllesSoWieEsIst.wav",
+        "label": "Es bleibt hier alles so wie es ist!",
+        "internal": "Esbleibthierallessowieesist"
+    },
+    {
+        "filename": "EsTutUnsLeid.wav",
+        "label": "Es tut uns leid",
+        "internal": "Estutunsleid"
+    },
+    {
+        "filename": "FuenfUnd.wav",
+        "label": "FünfUnd",
+        "internal": "Fuenfund"
+    },
+    {
+        "filename": "gegebenenfalls.wav",
+        "label": "gegebenenfalls",
+        "internal": "Gegebenenfalls"
+    },
+    {
+        "filename": "Gleich.wav",
+        "label": "gleich",
+        "internal": "gleich"
+    },
+    {
+        "filename": "Gleis.wav",
+        "label": "Gleis",
+        "internal": "Gleis"
+    },
+    {
+        "filename": "GrundDafuer.wav",
+        "label": "Grund dafür",
+        "internal": "Grunddafuer"
+    },
+    {
+        "filename": "Halle-Hbf.wav",
+        "label": "Halle Hbf",
+        "internal": "Halle-Hbf",
+        "cat": "stations"
+    },
+    {
+        "filename": "Halle-Messe.wav",
+        "label": "Halle-Messe",
+        "internal": "Halle-Messe",
+        "cat": "stations"
+    },
+    {
+        "filename": "HalleNietleben.wav",
+        "label": "Halle-Nietleben",
+        "internal": "Hallenietleben",
+        "cat": "stations"
+    },
+    {
+        "filename": "Hamburg.wav",
+        "label": "Hamburg",
+        "internal": "Hamburg",
+        "cat": "stations"
+    },
+    {
+        "filename": "HeuteCa.wav",
+        "label": "Heute ca.",
+        "internal": "Heuteca"
+    },
+    {
+        "filename": "Hundert.wav",
+        "label": "Hundert",
+        "internal": "Hundert",
+        "cat": "numbers"
+    },
+    {
+        "filename": "IC.wav",
+        "label": "IC",
+        "internal": "Ic",
+        "cat": "trains"
+    },
+    {
+        "filename": "ICE.wav",
+        "label": "ICE",
+        "internal": "Ice",
+        "cat": "trains"
+    },
+    {
+        "filename": "IhreNaechstenAnschluesse.wav",
+        "label": "Ihre nächsten Anschlüsse",
+        "internal": "Ihrenaechstenanschluesse"
+    },
+    {
+        "filename": "ImMomentSindAlleKundenmitarbeiterImGespraech.wav",
+        "label": "Im Moment sind alle Kundenmitarbeiter im Gespräch",
+        "internal": "Immomentsindallekundenmitarbeiterimgespraech"
+    },
+    {
+        "filename": "in.wav",
+        "label": "in",
+        "internal": "In"
+    },
+    {
+        "filename": "Information.wav",
+        "label": "Information",
+        "internal": "Information"
+    },
+    {
+        "filename": "InKuerzeErreichenWir.wav",
+        "label": "In Kürze erreichen wir",
+        "internal": "Inkuerzeerreichenwir"
+    },
+    {
+        "filename": "ist.wav",
+        "label": "ist",
+        "internal": "Ist"
+    },
+    {
+        "filename": "Jahr.wav",
+        "label": "Jahr",
+        "internal": "Jahr",
+        "cat": "units"
+    },
+    {
+        "filename": "Jahre.wav",
+        "label": "Jahre",
+        "internal": "Jahre",
+        "cat": "units"
+    },
+    {
+        "filename": "jeweils.wav",
+        "label": "jeweils",
+        "internal": "Jeweils"
+    },
+    {
+        "filename": "Kilometer.wav",
+        "label": "Kilometer",
+        "internal": "Kilometer",
+        "cat": "units"
+    },
+    {
+        "filename": "Kilometern.wav",
+        "label": "Kilometern",
+        "internal": "Kilometern",
+        "cat": "units"
+    },
+    {
+        "filename": "kurz.wav",
+        "label": "kurz",
+        "internal": "Kurz"
+    },
+    {
+        "filename": "kurze.wav",
+        "label": "kurze",
+        "internal": "Kurze"
+    },
+    {
+        "filename": "kurzen.wav",
+        "label": "kurzen",
+        "internal": "Kurzen"
+    },
+    {
+        "filename": "KurzfristigerPersonalausfall.wav",
+        "label": "Kurzfristiger Personalausfall",
+        "internal": "Kurzfristigerpersonalausfall"
+    },
+    {
+        "filename": "LassenSieIhrGepaeckNichtUnbeaufsichtigt.wav",
+        "label": "Lassen Sie Ihr Gepäck nicht unbeaufsichtigt",
+        "internal": "Lassensieihrgepaecknichtunbeaufsichtigt"
+    },
+    {
+        "filename": "LeipzigerStrasse.wav",
+        "label": "Leipziger Straße",
+        "internal": "Leipzigerstrasse",
+        "cat": "stations"
+    },
+    {
+        "filename": "LeipzigerStrasse_2.wav",
+        "label": "Leipziger Straße v2",
+        "internal": "Leipzigerstrasse2",
+        "cat": "stations"
+    },
+    {
+        "filename": "LeipzigHalleFlughafen.wav",
+        "label": "Leipzig/Halle Flughafen",
+        "internal": "Leipzighalleflughafen",
+        "cat": "stations"
+    },
+    {
+        "filename": "LeipzigHbf.wav",
+        "label": "Leipzig Hbf",
+        "internal": "Leipzighbf",
+        "cat": "stations"
+    },
+    {
+        "filename": "LimbachOberfrohna.wav",
+        "label": "Limbach-Oberfrohna",
+        "internal": "Limbachoberfrohna",
+        "cat": "stations"
+    },
+    {
+        "filename": "Links.wav",
+        "label": "Links",
+        "internal": "Links",
+        "cat": "directions"
+    },
+    {
+        "filename": "Messe.wav",
+        "label": "Messe",
+        "internal": "Messe"
+    },
+    {
+        "filename": "Meter.wav",
+        "label": "Meter",
+        "internal": "Meter",
+        "cat": "units"
+    },
+    {
+        "filename": "Metern.wav",
+        "label": "Metern",
+        "internal": "Metern",
+        "cat": "units"
+    },
+    {
+        "filename": "Minute.wav",
+        "label": "Minute",
+        "internal": "Minute",
+        "cat": "units"
+    },
+    {
+        "filename": "Minuten.wav",
+        "label": "Minuten",
+        "internal": "Minuten",
+        "cat": "units"
+    },
+    {
+        "filename": "MitDerHauptrolleVon.wav",
+        "label": "Mit der Hauptrolle von",
+        "internal": "Mitderhauptrollevon"
+    },
+    {
+        "filename": "Mitte.wav",
+        "label": "Mitte",
+        "internal": "Mitte",
+        "cat": "directions"
+    },
+    {
+        "filename": "MoinMoin.wav",
+        "label": "Moin Moin",
+        "internal": "Moinmoin",
+        "cat": "greetings"
+    },
+    {
+        "filename": "Moment.wav",
+        "label": "Moment",
+        "internal": "Moment",
+        "cat": "units"
+    },
+    {
+        "filename": "Monat.wav",
+        "label": "Monat",
+        "internal": "Monat",
+        "cat": "units"
+    },
+    {
+        "filename": "Monate.wav",
+        "label": "Monate",
+        "internal": "Monate",
+        "cat": "units"
+    },
+    {
+        "filename": "Muenchen.wav",
+        "label": "München",
+        "internal": "Muenchen",
+        "cat": "stations"
+    },
+    {
+        "filename": "nach.wav",
+        "label": "nach",
+        "internal": "Nach"
+    },
+    {
+        "filename": "Narsdorf.wav",
+        "label": "Narsdorf",
+        "internal": "Narsdorf",
+        "cat": "stations"
+    },
+    {
+        "filename": "NeunUnd.wav",
+        "label": "Neun und",
+        "internal": "Neunund",
+        "cat": "numbers"
+    },
+    {
+        "filename": "Neustadt.wav",
+        "label": "Neustadt",
+        "internal": "Neustadt",
+        "cat": "stations"
+    },
+    {
+        "filename": "NeustadtCentrum.wav",
+        "label": "Neustadt-Centrum",
+        "internal": "Neustadtcentrum",
+        "cat": "stations"
+    },
+    {
+        "filename": "Nietleben.wav",
+        "label": "Nietleben",
+        "internal": "Nietleben",
+        "cat": "stations"
+    },
+    {
+        "filename": "Nini.wav",
+        "label": "Nini",
+        "internal": "Nini",
+        "cat": "names"
+    },
+    {
+        "filename": "oder.wav",
+        "label": "oder",
+        "internal": "Oder"
+    },
+    {
+        "filename": "ohne.wav",
+        "label": "ohne",
+        "internal": "Ohne"
+    },
+    {
+        "filename": "RB.wav",
+        "label": "RB",
+        "internal": "Rb",
+        "cat": "trains"
+    },
+    {
+        "filename": "RE.wav",
+        "label": "RE",
+        "internal": "Re",
+        "cat": "trains"
+    },
+    {
+        "filename": "Rechts.wav",
+        "label": "Rechts",
+        "internal": "Rechts",
+        "cat": "directions"
+    },
+    {
+        "filename": "RestlicheKraeuterGrobAbzupfen.wav",
+        "label": "RestlicheKraeuterGrobAbzupfen",
+        "internal": "Restlichekraeutergrobabzupfen"
+    },
+    {
+        "filename": "Richtung.wav",
+        "label": "Richtung",
+        "internal": "Richtung",
+        "cat": "directions"
+    },
+    {
+        "filename": "Rosengarten.wav",
+        "label": "Rosengarten",
+        "internal": "Rosengarten",
+        "cat": "stations"
+    },
+    {
+        "filename": "S.wav",
+        "label": "S",
+        "internal": "S",
+        "cat": "trains"
+    },
+    {
+        "filename": "SBahnhof.wav",
+        "label": "S-Bahnhof",
+        "internal": "Sbahnhof"
+    },
+    {
+        "filename": "Schwimmhalle.wav",
+        "label": "Schwimmhalle",
+        "internal": "Schwimmhalle"
+    },
+    {
+        "filename": "SechsUnd.wav",
+        "label": "Sechs und",
+        "internal": "Sechsund",
+        "cat": "numbers"
+    },
+    {
+        "filename": "Sekunde.wav",
+        "label": "Sekunde",
+        "internal": "Sekunde",
+        "cat": "units"
+    },
+    {
+        "filename": "Sekunden.wav",
+        "label": "Sekunden",
+        "internal": "Sekunden",
+        "cat": "units"
+    },
+    {
+        "filename": "Sicherheitshinweis.wav",
+        "label": "Sicherheitshinweis",
+        "internal": "Sicherheitshinweis"
+    },
+    {
+        "filename": "SiebenUnd.wav",
+        "label": "Sieben und",
+        "internal": "Siebenund",
+        "cat": "numbers"
+    },
+    {
+        "filename": "SieHabenIhrenZielortErreicht.wav",
+        "label": "Sie haben Ihren Zielort erreicht",
+        "internal": "Siehabenihrenzielorterreicht"
+    },
+    {
+        "filename": "Silberhoehe.wav",
+        "label": "Silberhöhe",
+        "internal": "Silberhoehe",
+        "cat": "stations"
+    },
+    {
+        "filename": "sind.wav",
+        "label": "sind",
+        "internal": "Sind"
+    },
+    {
+        "filename": "Sofort.wav",
+        "label": "Sofort",
+        "internal": "Sofort"
+    },
+    {
+        "filename": "spaeter.wav",
+        "label": "später",
+        "internal": "Spaeter"
+    },
+    {
+        "filename": "Steintorbruecke.wav",
+        "label": "Steintorbrücke",
+        "internal": "Steintorbruecke"
+    },
+    {
+        "filename": "Stunde.wav",
+        "label": "Stunde",
+        "internal": "Stunde",
+        "cat": "units"
+    },
+    {
+        "filename": "Stunden.wav",
+        "label": "Stunden",
+        "internal": "Stunden",
+        "cat": "units"
+    },
+    {
+        "filename": "Suedstadt.wav",
+        "label": "Südstadt",
+        "internal": "Suedstadt"
+    },
+    {
+        "filename": "Tag.wav",
+        "label": "Tag",
+        "internal": "Tag",
+        "cat": "units"
+    },
+    {
+        "filename": "Tage.wav",
+        "label": "Tage",
+        "internal": "Tage",
+        "cat": "units"
+    },
+    {
+        "filename": "Tausend.wav",
+        "label": "Tausend",
+        "internal": "Tausend",
+        "cat": "numbers"
+    },
+    {
+        "filename": "Tibik.wav",
+        "label": "Tibik",
+        "internal": "Tibik",
+        "cat": "names"
+    },
+    {
+        "filename": "TibikUndNini.wav",
+        "label": "Tibik und Nini",
+        "internal": "Tibikundnini"
+    },
+    {
+        "filename": "TibikUndNiniHabenSichLieb.wav",
+        "label": "Tibik und Nini haben sich lieb",
+        "internal": "Tibikundninihabensichlieb"
+    },
+    {
+        "filename": "TibikUndNiniMoegenSichGern.wav",
+        "label": "Tibik und Nini mögen sich gern",
+        "internal": "Tibikundninimoegensichgern"
+    },
+    {
+        "filename": "Trotha.wav",
+        "label": "Trotha",
+        "internal": "Trotha"
+    },
+    {
+        "filename": "ueber.wav",
+        "label": "über",
+        "internal": "Ueber"
+    },
+    {
+        "filename": "Uhr.wav",
+        "label": "Uhr",
+        "internal": "Uhr",
+        "cat": "units"
+    },
+    {
+        "filename": "Uhrzeit.wav",
+        "label": "Uhrzeit",
+        "internal": "Uhrzeit"
+    },
+    {
+        "filename": "und.wav",
+        "label": "und",
+        "internal": "Und"
+    },
+    {
+        "filename": "VielenDank.wav",
+        "label": "Vielen Dank",
+        "internal": "Vielendank"
+    },
+    {
+        "filename": "VierUnd.wav",
+        "label": "VierUnd",
+        "internal": "Vierund",
+        "cat": "numbers"
+    },
+    {
+        "filename": "VorsichtBeiDerEinfahrt.wav",
+        "label": "Vorsicht bei der Einfahrt",
+        "internal": "Vorsichtbeidereinfahrt"
+    },
+    {
+        "filename": "wenig.wav",
+        "label": "wenig",
+        "internal": "Wenig"
+    },
+    {
+        "filename": "wenige.wav",
+        "label": "wenige",
+        "internal": "Wenige"
+    },
+    {
+        "filename": "WerteFahrgaeste.wav",
+        "label": "Werte Fahrgäste",
+        "internal": "Wertefahrgaeste"
+    },
+    {
+        "filename": "wieder.wav",
+        "label": "wieder",
+        "internal": "Wieder"
+    },
+    {
+        "filename": "WirBittenAlleFahrgaesteAuszusteigen.wav",
+        "label": "Wir bitten alle Fahrgäste auszusteigen",
+        "internal": "Wirbittenallefahrgaesteauszusteigen"
+    },
+    {
+        "filename": "WirBittenAlleFahrgaesteEinzusteigen.wav",
+        "label": "Wir bitten alle Fahrgäste einzusteigen",
+        "internal": "Wirbittenallefahrgaesteeinzusteigen"
+    },
+    {
+        "filename": "WirBittenUmIhrVerstaendnis.wav",
+        "label": "Wir bitten um Ihr Verständnis",
+        "internal": "Wirbittenumihrverstaendnis"
+    },
+    {
+        "filename": "WirBitternUmEntschuldigung.wav",
+        "label": "Wir bittern um Entschuldigung",
+        "internal": "Wirbitternumentschuldigung"
+    },
+    {
+        "filename": "Woche.wav",
+        "label": "Woche",
+        "internal": "Woche",
+        "cat": "units"
+    },
+    {
+        "filename": "Wochen.wav",
+        "label": "Wochen",
+        "internal": "Wochen",
+        "cat": "units"
+    },
+    {
+        "filename": "WohnstadtNord.wav",
+        "label": "Wohnstadt Nord",
+        "internal": "Wohnstadtnord"
+    },
+    {
+        "filename": "ZscherbenerStrasse.wav",
+        "label": "Zscherbener Straße",
+        "internal": "Zscherbenerstrasse",
+        "cat": "stations"
+    },
+    {
+        "filename": "zu.wav",
+        "label": "zu",
+        "internal": "Zu"
+    },
+    {
+        "filename": "zu_2.wav",
+        "label": "zu v2",
+        "internal": "Zu2"
+    },
+    {
+        "filename": "ZweiUnd.wav",
+        "label": "Zwei und",
+        "internal": "Zweiund",
+        "cat": "numbers"
+    }
+]

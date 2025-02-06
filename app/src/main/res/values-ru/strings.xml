@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Синтезатор речи</string>
+    <string name="app_name">Синтезатор звуков</string>
     <string name="play">Восроизвести</string>
     <string name="pause">Пауза</string>
     <string name="drag_handle_description">Переместить аудиоэлемент</string>
@@ -20,4 +21,31 @@
     <string name="ok">OK</string>
     <string name="play_audio">Проиграть аудио</string>
     <string name="dont_show_again">Больше не показывать</string>
+    <string name="nav_home">Главная</string>
+    <string name="nav_custom_sounds">Свои звуки</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="settings_title">Настройки</string>
+    <string name="no_custom_sounds">Пока нет своих звуков.\nНажмите + вверху, чтобы добавить свои звуки.</string>
+    <string name="no_sounds_available">В этой категории нет звуков.</string>
+    <string name="version_text">Версия %1$s</string>
+    <string name="download_voice_files">Скачать голосовые файлы</string>
+    <string name="retry_download">Повторить загрузку</string>
+    <string name="checking_voice_files">Проверка голосовых файлов...</string>
+    <string name="downloading_voice_files">Загрузка голосовых файлов...</string>
+    <string name="extracting_voice_files">Распаковка голосовых файлов...</string>
+    <string name="error_no_internet">Нет подключения к интернету. Проверьте подключение и попробуйте снова.</string>
+    <string name="error_download_failed">Не удалось загрузить голосовые файлы (HTTP %1$d). Попробуйте снова.</string>
+    <string name="error_extraction_failed">Не удалось распаковать голосовые файлы. Попробуйте снова.</string>
+    <string name="error_latest_release">Не удалось найти последнюю версию голосовых файлов. Попробуйте позже.</string>
+    <string name="error_invalid_zip">Неверный пакет голосовых файлов: отсутствуют необходимые файлы.</string>
+    <string name="error_loading_categories">Не удалось загрузить категории звуков. Попробуйте снова.</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="privacy_policy_cta">Нажмите, чтобы посмотреть</string>
+    <string name="privacy_policy_loading">Загрузка политики конфиденциальности...</string>
+    <string name="privacy_policy_error">Не удалось загрузить политику конфиденциальности. Проверьте подключение к интернету и попробуйте снова.</string>
+    <string name="app_description">Настраиваемый звуковой пульт для железнодорожных объявлений и ваших собственных звуков</string>
+    <string name="language_settings">Язык</string>
+    <string name="language_english">Английский</string>
+    <string name="language_german">Немецкий</string>
+    <string name="language_russian">Русский</string>
 </resources>

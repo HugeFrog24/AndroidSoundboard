@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- ScrollView for the audio queue -->
+    <!-- Audio Queue Section -->
     <ScrollView
         android:id="@+id/scrollViewAudioQueue"
         android:layout_width="0dp"
@@ -24,26 +24,10 @@
             app:justifyContent="flex_start"
             app:alignItems="flex_start"
             app:alignContent="flex_start">
-            <!-- Your audio item views will be added here programmatically -->
         </com.google.android.flexbox.FlexboxLayout>
     </ScrollView>
 
-    <!-- Add Custom Sound button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/addCustomSoundButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_abbr"
-        app:icon="@android:drawable/ic_input_add"
-        app:iconGravity="textStart"
-        app:iconPadding="8dp"
-        style="@style/Widget.Material3.Button"
-        app:layout_constraintTop_toBottomOf="@id/scrollViewAudioQueue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/playButton"
-        app:layout_constraintBottom_toTopOf="@id/scrollViewButtons" />
-
-    <!-- Updated Play button without outline -->
+    <!-- Control Buttons -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/playButton"
         android:layout_width="wrap_content"
@@ -54,11 +38,10 @@
         app:iconPadding="8dp"
         style="@style/Widget.Material3.Button"
         app:layout_constraintTop_toBottomOf="@id/scrollViewAudioQueue"
-        app:layout_constraintBottom_toTopOf="@id/scrollViewButtons"
-        app:layout_constraintStart_toEndOf="@id/addCustomSoundButton"
+        app:layout_constraintBottom_toTopOf="@id/fragmentContainer"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/clearQueueButton" />
 
-    <!-- Updated Clear button without outline -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/clearQueueButton"
         android:layout_width="wrap_content"
@@ -71,29 +54,17 @@
         app:layout_constraintTop_toBottomOf="@id/scrollViewAudioQueue"
         app:layout_constraintStart_toEndOf="@id/playButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/scrollViewButtons" />
+        app:layout_constraintBottom_toTopOf="@id/fragmentContainer" />
 
-    <!-- ScrollView for buttons to avoid overlap -->
-    <ScrollView
-        android:id="@+id/scrollViewButtons"
+    <!-- Fragment Container -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/playButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.flexbox.FlexboxLayout
-            android:id="@+id/buttonContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:flexWrap="wrap"
-            app:justifyContent="space_around"
-            app:alignItems="flex_start"
-            app:alignContent="flex_start">
-            <!-- Buttons will be added here programmatically -->
-        </com.google.android.flexbox.FlexboxLayout>
-    </ScrollView>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <FrameLayout
         android:id="@+id/audioQueueContainer"
@@ -103,5 +74,16 @@
         app:layout_constraintBottom_toTopOf="@id/playButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu="@menu/bottom_nav_menu"
+        style="@style/Widget.Material3.BottomNavigationView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
