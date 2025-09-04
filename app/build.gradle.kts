@@ -2,21 +2,21 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.composeCompiler)
-    id("io.gitlab.arturbosch.detekt") version "1.23.7"
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
     alias(libs.plugins.googleGmsGoogleServices)
     alias(libs.plugins.googleFirebaseCrashlytics)
 }
 
 android {
     namespace = "com.tibik.speechsynthesizer"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.tibik.speechsynthesizer"
         minSdk = 28
         targetSdk = 35
-        versionCode = 13
-        versionName = "1.3.6"
+        versionCode = 14
+        versionName = "1.3.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
