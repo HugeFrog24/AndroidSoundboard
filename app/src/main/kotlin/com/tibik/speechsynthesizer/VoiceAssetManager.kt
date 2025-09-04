@@ -150,7 +150,15 @@ class VoiceAssetManager(private val context: Context) {
     }
 
     private fun areVoiceAssetsDownloaded(): Boolean {
-        return voiceDir.exists() && voiceDir.list()?.isNotEmpty() == true
+        // Check if voice directory exists and has files
+        val hasVoiceFiles = voiceDir.exists() && voiceDir.list()?.isNotEmpty() == true
+        
+        // Check if metadata files exist
+        val categoriesFile = File(metadataDir, CATEGORIES_JSON)
+        val voiceFilesFile = File(metadataDir, VOICE_FILES_JSON)
+        val hasMetadataFiles = categoriesFile.exists() && voiceFilesFile.exists()
+        
+        return hasVoiceFiles && hasMetadataFiles
     }
 
     private fun verifyZipContents(zipFile: File): Boolean {
@@ -159,21 +167,60 @@ class VoiceAssetManager(private val context: Context) {
             var hasVoiceDir = false
             var hasCategoriesJson = false
             var hasVoiceFilesJson = false
+            val entries = mutableListOf<String>()
 
             ZipInputStream(zipFile.inputStream()).use { zip ->
                 var entry = zip.nextEntry
                 while (entry != null) {
-                    when {
-                        entry.name.startsWith("metadata/") -> hasMetadataDir = true
-                        entry.name.startsWith("voice/") -> hasVoiceDir = true
-                        entry.name == "metadata/categories.json" -> hasCategoriesJson = true
-                        entry.name == "metadata/voice_files.json" -> hasVoiceFilesJson = true
+                    entries.add(entry.name)
+                    Log.d(TAG, "Processing zip entry: '${entry.name}' (length: ${entry.name.length})")
+                    
+                    // Check specific files first, then directories
+                    when (entry.name) {
+                        "metadata/categories.json" -> {
+                            hasCategoriesJson = true
+                            hasMetadataDir = true
+                            Log.d(TAG, "Found categories.json!")
+                        }
+                        "metadata/voice_files.json" -> {
+                            hasVoiceFilesJson = true
+                            hasMetadataDir = true
+                            Log.d(TAG, "Found voice_files.json!")
+                        }
+                        else -> {
+                            when {
+                                entry.name.startsWith("metadata/") -> {
+                                    hasMetadataDir = true
+                                    Log.d(TAG, "Found metadata directory entry")
+                                }
+                                entry.name.startsWith("voice/") -> {
+                                    hasVoiceDir = true
+                                    Log.d(TAG, "Found voice directory entry")
+                                }
+                            }
+                        }
                     }
                     entry = zip.nextEntry
                 }
             }
 
-            hasMetadataDir && hasVoiceDir && hasCategoriesJson && hasVoiceFilesJson
+            // Log detailed verification results
+            Log.d(TAG, "Zip contents verification:")
+            Log.d(TAG, "- Has metadata directory: $hasMetadataDir")
+            Log.d(TAG, "- Has voice directory: $hasVoiceDir")
+            Log.d(TAG, "- Has categories.json: $hasCategoriesJson")
+            Log.d(TAG, "- Has voice_files.json: $hasVoiceFilesJson")
+
+            val isValid = hasMetadataDir && hasVoiceDir && hasCategoriesJson && hasVoiceFilesJson
+            if (!isValid) {
+                Log.e(TAG, "Missing required files/directories:")
+                if (!hasMetadataDir) Log.e(TAG, "- metadata/ directory")
+                if (!hasVoiceDir) Log.e(TAG, "- voice/ directory")
+                if (!hasCategoriesJson) Log.e(TAG, "- metadata/categories.json")
+                if (!hasVoiceFilesJson) Log.e(TAG, "- metadata/voice_files.json")
+            }
+
+            isValid
         } catch (e: Exception) {
             Log.e(TAG, "Failed to verify zip contents: ${e.message}")
             false
@@ -260,11 +307,13 @@ class VoiceAssetManager(private val context: Context) {
                     var entry = zip.nextEntry
                     while (entry != null) {
                         if (!entry.isDirectory) {
-                            val outputFile = File(voiceDir, entry.name)
+                            // Extract to the base external files directory, preserving the zip structure
+                            val outputFile = File(context.getExternalFilesDir(null), entry.name)
                             outputFile.parentFile?.mkdirs()
                             FileOutputStream(outputFile).use { output ->
                                 zip.copyTo(output)
                             }
+                            Log.d(TAG, "Extracted: ${entry.name} to ${outputFile.absolutePath}")
                         }
                         processedEntries++
                         _downloadProgress.value = DownloadState.Extracting(processedEntries.toFloat() / totalEntries)
@@ -280,6 +329,20 @@ class VoiceAssetManager(private val context: Context) {
             // Cleanup temp file
             tempZipFile.delete()
             _downloadProgress.value = DownloadState.Completed
+            
+            // Automatically load metadata from the extracted files
+            Log.d(TAG, "Download completed, loading metadata from extracted files...")
+            val metadata = loadMetadataFromDisk()
+            if (metadata != null) {
+                cachedMetadata = metadata
+                lastMetadataFetch = System.currentTimeMillis()
+                _metadataState.value = MetadataState.Loaded(MetadataState.Source.SERVER)
+                updateAudioFiles(metadata)
+            } else {
+                Log.e(TAG, "Failed to load metadata from extracted files")
+                _metadataState.value = MetadataState.Error("Failed to load extracted metadata")
+            }
+            
             true
         } catch (e: Exception) {
             Log.e(TAG, "Unexpected error: ${e.message}")
@@ -355,24 +418,34 @@ class VoiceAssetManager(private val context: Context) {
             }
 
             // Get latest release URL
-            val downloadUrl = getLatestReleaseUrl() ?: return@withContext loadMetadataFromDisk()?.also {
+            getLatestReleaseUrl() ?: return@withContext loadMetadataFromDisk()?.also {
                 _metadataState.value = MetadataState.Loaded(MetadataState.Source.CACHE)
             }
 
             // Create metadata directory if it doesn't exist
             metadataDir.mkdirs()
 
-            // Download and parse categories.json
-            val categoriesFile = File(metadataDir, CATEGORIES_JSON)
-            val categories = downloadFile("$downloadUrl/$CATEGORIES_JSON", categoriesFile)?.let { file ->
-                parseCategories(file.readText())
-            } ?: return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            // Download the zip file first
+            if (!downloadAndExtractVoiceAssets()) {
+                return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            }
 
-            // Download and parse voice_files.json
+            // Now read the extracted JSON files
+            val categoriesFile = File(metadataDir, CATEGORIES_JSON)
+            val categories = if (categoriesFile.exists()) {
+                parseCategories(categoriesFile.readText())
+            } else {
+                Log.e(TAG, "categories.json not found in extracted files")
+                return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            }
+
             val voiceFilesFile = File(metadataDir, VOICE_FILES_JSON)
-            val voiceFiles = downloadFile("$downloadUrl/$VOICE_FILES_JSON", voiceFilesFile)?.let { file ->
-                parseVoiceFiles(file.readText())
-            } ?: return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            val voiceFiles = if (voiceFilesFile.exists()) {
+                parseVoiceFiles(voiceFilesFile.readText())
+            } else {
+                Log.e(TAG, "voice_files.json not found in extracted files")
+                return@withContext loadMetadataFromDisk() ?: loadMetadataFromAssets()
+            }
 
             MetadataFiles(categories, voiceFiles).also {
                 cachedMetadata = it
@@ -386,39 +459,6 @@ class VoiceAssetManager(private val context: Context) {
             loadMetadataFromDisk()?.also {
                 _metadataState.value = MetadataState.Loaded(MetadataState.Source.CACHE)
             }
-        }
-    }
-
-    private suspend fun downloadFile(url: String, outputFile: File): File? = withContext(Dispatchers.IO) {
-        try {
-            val connection = URL(url).openConnection() as java.net.HttpURLConnection
-            connection.setRequestProperty("Accept", "application/json")
-            
-            try {
-                when (connection.responseCode) {
-                    java.net.HttpURLConnection.HTTP_OK -> {
-                        connection.inputStream.use { input ->
-                            FileOutputStream(outputFile).use { output ->
-                                input.copyTo(output)
-                            }
-                        }
-                        return@withContext outputFile
-                    }
-                    java.net.HttpURLConnection.HTTP_NOT_FOUND -> {
-                        Log.e(TAG, "File not found: $url")
-                        null
-                    }
-                    else -> {
-                        Log.e(TAG, "Download failed with status code: ${connection.responseCode}")
-                        null
-                    }
-                }
-            } finally {
-                connection.disconnect()
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to download file: ${e.message}")
-            null
         }
     }
 
@@ -444,10 +484,12 @@ class VoiceAssetManager(private val context: Context) {
     private fun loadMetadataFromAssets(): MetadataFiles? {
         // Only use assets in debug builds
         if (!isDebugBuild) {
+            Log.d(TAG, "Not a debug build, skipping asset loading")
             return null
         }
         
         return try {
+            Log.d(TAG, "Loading metadata from assets...")
             val categories = context.assets.open("metadata/$CATEGORIES_JSON").bufferedReader().use { reader ->
                 parseCategories(reader.readText())
             }
@@ -456,6 +498,7 @@ class VoiceAssetManager(private val context: Context) {
                 parseVoiceFiles(reader.readText())
             }
 
+            Log.d(TAG, "Loaded ${categories.size} categories and ${voiceFiles.size} voice files from assets")
             MetadataFiles(categories, voiceFiles)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to load metadata from assets: ${e.message}")
@@ -528,11 +571,12 @@ class VoiceAssetManager(private val context: Context) {
                 filename = voiceFile.filename,
                 label = voiceFile.label,
                 internal = voiceFile.internal,
-                cat = voiceFile.cat,
+                cat = voiceFile.cat?.lowercase(), // Normalize category names to lowercase
                 isCustom = false
             )
         } ?: emptyList()
         
+        Log.d(TAG, "Updated audio files: ${files.size} files loaded")
         _audioFiles.emit(files)
     }
 

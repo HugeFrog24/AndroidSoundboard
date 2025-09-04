@@ -8,6 +8,7 @@ import android.os.IBinder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.tibik.speechsynthesizer.VoiceAssetManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +22,9 @@ class AudioPlaybackViewModel(private val context: Context) : ViewModel() {
     data class UiState(
         val isPlaying: Boolean = false,
         val currentIndex: Int = 0,
-        val queue: List<AudioIdentifier> = emptyList()
+        val queue: List<AudioIdentifier> = emptyList(),
+        val downloadState: VoiceAssetManager.DownloadState = VoiceAssetManager.DownloadState.NotStarted,
+        val error: String? = null
     )
 
     private val serviceConnection = object : ServiceConnection {
@@ -29,12 +32,18 @@ class AudioPlaybackViewModel(private val context: Context) : ViewModel() {
             val binder = service as AudioPlaybackService.LocalBinder
             playbackService = binder.getService()
             observeServiceState()
+            // Notify that service is connected
+            _serviceConnected.value = true
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             playbackService = null
+            _serviceConnected.value = false
         }
     }
+
+    private val _serviceConnected = MutableStateFlow(false)
+    val serviceConnected: StateFlow<Boolean> = _serviceConnected.asStateFlow()
 
     init {
         bindService()
@@ -52,7 +61,9 @@ class AudioPlaybackViewModel(private val context: Context) : ViewModel() {
                 _uiState.value = UiState(
                     isPlaying = serviceState.isPlaying,
                     currentIndex = serviceState.currentIndex,
-                    queue = serviceState.queue
+                    queue = serviceState.queue,
+                    downloadState = serviceState.downloadState,
+                    error = serviceState.error
                 )
             }
         }
@@ -69,6 +80,13 @@ class AudioPlaybackViewModel(private val context: Context) : ViewModel() {
     fun clearQueue() {
         playbackService?.clearQueue()
     }
+
+    fun ensureVoiceAssetsAvailable() {
+        playbackService?.ensureVoiceAssetsAvailable()
+    }
+
+    fun getAudioFiles() = playbackService?.getAudioFiles()
+    fun getMetadataState() = playbackService?.getMetadataState()
 
     override fun onCleared() {
         context.unbindService(serviceConnection)

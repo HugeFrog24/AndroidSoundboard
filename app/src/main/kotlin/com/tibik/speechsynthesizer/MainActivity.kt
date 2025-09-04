@@ -74,6 +74,11 @@ class MainActivity : AppCompatActivity(), AudioUIManager.OnAudioQueueChangeListe
                 }
             }
         }
+        
+        // Trigger initial voice asset check on startup
+        lifecycleScope.launch {
+            viewModel.ensureVoiceAssetsAvailable()
+        }
     }
 
     private fun setupUI() {
@@ -213,10 +218,11 @@ class MainActivity : AppCompatActivity(), AudioUIManager.OnAudioQueueChangeListe
         val typedValue = android.util.TypedValue()
         val theme = theme
 
-        theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+        // Use Material 3 color attributes
+        theme.resolveAttribute(com.google.android.material.R.attr.colorPrimaryContainer, typedValue, true)
         val backgroundColor = typedValue.data
 
-        theme.resolveAttribute(com.google.android.material.R.attr.colorOnPrimary, typedValue, true)
+        theme.resolveAttribute(com.google.android.material.R.attr.colorOnPrimaryContainer, typedValue, true)
         val onPrimaryColor = typedValue.data
 
         playButton.setBackgroundColor(backgroundColor)

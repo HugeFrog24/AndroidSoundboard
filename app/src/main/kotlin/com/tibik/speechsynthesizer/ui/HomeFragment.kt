@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.tibik.speechsynthesizer.R
+import com.tibik.speechsynthesizer.VoiceAssetManager
 import com.tibik.speechsynthesizer.VoiceAssetManager.MetadataState
 import com.tibik.speechsynthesizer.lib.audio.AudioFile
 import com.tibik.speechsynthesizer.lib.audio.AudioIdentifier
@@ -19,14 +21,20 @@ class HomeFragment : BaseSoundFragment() {
     private val _audioFiles = MutableStateFlow<List<AudioFile>>(emptyList())
     private val audioFiles: StateFlow<List<AudioFile>> = _audioFiles
     
+    private val _downloadState = MutableStateFlow<VoiceAssetManager.DownloadState>(VoiceAssetManager.DownloadState.NotStarted)
+    private val downloadState: StateFlow<VoiceAssetManager.DownloadState> = _downloadState
+    
+    private val _categories = MutableStateFlow<List<BaseSoundFragment.Category>>(emptyList())
+    private val categories: StateFlow<List<BaseSoundFragment.Category>> = _categories
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = createHomeScreen(
-        downloadState = voiceManager.downloadProgress,
+        downloadState = downloadState,
         audioFiles = audioFiles,
-        categories = loadCategories(),
+        categories = categories,
         showCustomOnly = false,
         onAudioItemClick = { audioFile ->
             val audioIdentifier = if (audioFile.isCustom) {
@@ -40,15 +48,39 @@ class HomeFragment : BaseSoundFragment() {
         },
         onDownloadClick = {
             viewLifecycleOwner.lifecycleScope.launch {
-                voiceManager.ensureVoiceAssetsAvailable()
+                viewModel.ensureVoiceAssetsAvailable()
             }
         },
         onRetryClick = {
             viewLifecycleOwner.lifecycleScope.launch {
-                voiceManager.ensureVoiceAssetsAvailable()
+                viewModel.ensureVoiceAssetsAvailable()
             }
         }
     )
+
+    private fun getCategoriesFromAudioFiles(): List<BaseSoundFragment.Category> {
+        // Use audio files from the service instead of fragment's VoiceAssetManager
+        return _audioFiles.value
+            .mapNotNull { it.cat }
+            .distinct()
+            .map { categoryId ->
+                BaseSoundFragment.Category(
+                    id = categoryId,
+                    name = when (categoryId) {
+                        "numbers" -> getString(R.string.category_numbers)
+                        "stations" -> getString(R.string.category_stations)
+                        "directions" -> getString(R.string.category_directions)
+                        "greetings" -> getString(R.string.category_greetings)
+                        "units" -> getString(R.string.category_units)
+                        "trains" -> getString(R.string.category_trains)
+                        "names" -> getString(R.string.category_names)
+                        "other" -> getString(R.string.category_other)
+                        "custom" -> getString(R.string.category_custom)
+                        else -> categoryId
+                    }
+                )
+            }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,34 +90,48 @@ class HomeFragment : BaseSoundFragment() {
             AudioPlaybackViewModel.Factory(requireContext())
         )[AudioPlaybackViewModel::class.java]
         
-        // Observe metadata state and audio files
+        // Observe ViewModel state for download progress
         viewLifecycleOwner.lifecycleScope.launch {
-            voiceManager.metadataState.collect { state ->
-                when (state) {
-                    is MetadataState.Loading -> {
-                        // Loading state handled by createHomeScreen
+            viewModel.uiState.collect { state ->
+                _downloadState.emit(state.downloadState)
+            }
+        }
+
+        // Log initial state
+        android.util.Log.d("HomeFragment", "=== HomeFragment onViewCreated ===")
+        android.util.Log.d("HomeFragment", "Service audio files available: ${viewModel.getAudioFiles() != null}")
+        android.util.Log.d("HomeFragment", "Service metadata state available: ${viewModel.getMetadataState() != null}")
+        android.util.Log.d("HomeFragment", "Local VoiceAssetManager audio files: ${voiceManager.audioFiles.value.size}")
+        android.util.Log.d("HomeFragment", "Local VoiceAssetManager metadata state: ${voiceManager.metadataState.value}")
+
+        // Wait for service connection, then observe audio files
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.serviceConnected.collect { isConnected ->
+                android.util.Log.d("HomeFragment", "Service connection state: $isConnected")
+                if (isConnected) {
+                    android.util.Log.d("HomeFragment", "Service connected, starting to observe audio files")
+                    viewModel.getAudioFiles()?.collect { files ->
+                        android.util.Log.d("HomeFragment", "Service VoiceAssetManager emitted ${files.size} audio files")
+                        _audioFiles.emit(files)
+                        _categories.emit(getCategoriesFromAudioFiles())
+                        android.util.Log.d("HomeFragment", "Updated HomeFragment state: ${files.size} files, ${getCategoriesFromAudioFiles().size} categories")
                     }
-                    is MetadataState.Error -> {
-                        // If we have no audio files, trigger a retry
-                        if (_audioFiles.value.isEmpty()) {
-                            voiceManager.ensureVoiceAssetsAvailable()
-                        }
-                    }
-                    else -> {} // Other states handled by createHomeScreen
                 }
             }
         }
 
-        // Observe audio files from VoiceAssetManager
+        // Observe download state from ViewModel
         viewLifecycleOwner.lifecycleScope.launch {
-            voiceManager.audioFiles.collect { files ->
-                _audioFiles.emit(files)
+            viewModel.uiState.collect { state ->
+                android.util.Log.d("HomeFragment", "ViewModel download state: ${state.downloadState}")
+                _downloadState.emit(state.downloadState)
             }
         }
 
-        // Initial load
+        // Initial load - trigger metadata loading through service
         viewLifecycleOwner.lifecycleScope.launch {
-            voiceManager.loadMetadata() // This will trigger metadata fetch and audio files update
+            android.util.Log.d("HomeFragment", "Triggering initial metadata load through service")
+            viewModel.ensureVoiceAssetsAvailable()
         }
     }
 }

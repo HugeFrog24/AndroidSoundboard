@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
 fun Fragment.createHomeScreen(
     downloadState: StateFlow<DownloadState>,
     audioFiles: StateFlow<List<AudioFile>>,
-    categories: List<BaseSoundFragment.Category>,
+    categories: StateFlow<List<BaseSoundFragment.Category>>,
     showCustomOnly: Boolean,
     onAudioItemClick: (AudioFile) -> Unit,
     onDownloadClick: () -> Unit,
@@ -35,7 +35,7 @@ fun Fragment.createHomeScreen(
         HomeScreen(
             downloadState = downloadState.collectAsState().value,
             audioFiles = audioFiles.collectAsState().value,
-            categories = categories,
+            categories = categories.collectAsState().value,
             showCustomOnly = showCustomOnly,
             onAudioItemClick = onAudioItemClick,
             onDownloadClick = onDownloadClick,

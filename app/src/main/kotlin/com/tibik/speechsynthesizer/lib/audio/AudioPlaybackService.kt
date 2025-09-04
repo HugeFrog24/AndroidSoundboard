@@ -150,4 +150,14 @@ class AudioPlaybackService : Service(), MediaPlayerCallback {
         }
         _playbackState.value = PlaybackState()
     }
+
+    fun ensureVoiceAssetsAvailable() {
+        serviceScope.launch {
+            voiceManager.ensureVoiceAssetsAvailable()
+            voiceManager.loadMetadata()
+        }
+    }
+
+    fun getAudioFiles() = voiceManager.audioFiles
+    fun getMetadataState() = voiceManager.metadataState
 }
